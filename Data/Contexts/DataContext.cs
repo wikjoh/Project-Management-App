@@ -12,6 +12,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
     public DbSet<ServiceEntity> Services { get; set; }
     public DbSet<ServiceUnitEntity> ServiceUnits { get; set; }
     public DbSet<UserEntity> Users { get; set; }
+    public DbSet<UserRolesEntity> UserRoles { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -75,5 +76,12 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
                 "CONCAT(FirstName, ' ', LastName)",
                 stored: true
             );
+
+
+        // User roles
+        modelBuilder.Entity<UserRolesEntity>()
+            .HasOne(ur => ur.User)
+            .WithOne(u => u.UserRole)
+            .HasForeignKey<UserRolesEntity>(ur => ur.UserId);
     }
 }

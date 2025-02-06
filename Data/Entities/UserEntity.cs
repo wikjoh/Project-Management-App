@@ -27,14 +27,8 @@ public class UserEntity
     [Column(TypeName = "varchar(200)")]
     public string EmailAddress { get; set; } = null!;
 
-    [Required]
-    public bool AdminRole { get; set; }
-
-    [Required]
-    public bool ProjectManagerRole { get; set; }
 
 
-
-
+    public UserRolesEntity UserRole { get; set; } = null!;
     public ICollection<ProjectEntity> Projects { get; set; } = [];
 }
