@@ -54,6 +54,20 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
     }
 
 
+    public async Task<bool?> ExistsAsync(Expression<Func<TEntity, bool>> predicate)
+    {
+        try
+        {
+            return await _dbSet.AnyAsync(predicate);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error check if {nameof(TEntity)} entity exists. {ex.Message}");
+            return null;
+        }
+    }
+
+
     // UPDATE
     public async Task<TEntity?> UpdateOneAsync(TEntity entityToUpdate, Expression<Func<TEntity, bool>> predicate)
     {
