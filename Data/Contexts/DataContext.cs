@@ -13,6 +13,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
     public DbSet<ServiceUnitEntity> ServiceUnits { get; set; }
     public DbSet<UserEntity> Users { get; set; }
     public DbSet<UserRolesEntity> UserRoles { get; set; }
+    public DbSet<RolesEntity> Roles { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -77,11 +78,19 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
                 stored: true
             );
 
+        modelBuilder.Entity<UserEntity>()
+            .HasMany(u => u.UserRoles)
+            .WithOne(ur => ur.User)
+            .HasForeignKey(u => u.UserId);
+
 
         // User roles
         modelBuilder.Entity<UserRolesEntity>()
-            .HasOne(ur => ur.User)
-            .WithOne(u => u.UserRole)
-            .HasForeignKey<UserRolesEntity>(ur => ur.UserId);
+            .HasKey(ur => new { ur.UserId, ur.RoleId });
+
+        modelBuilder.Entity<UserRolesEntity>()
+            .HasOne(ur => ur.Role)
+            .WithMany(r => r.UserRoles)
+            .HasForeignKey(ur => ur.RoleId);
     }
 }
