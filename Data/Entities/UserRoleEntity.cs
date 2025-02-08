@@ -2,7 +2,7 @@
 
 namespace Data.Entities;
 
-public class UserRolesEntity
+public class UserRoleEntity
 {
     [Key]
     public int UserId { get; set; }
@@ -12,5 +12,5 @@ public class UserRolesEntity
 
 
     public UserEntity User { get; set; } = null!;
-    public RolesEntity Role { get; set; } = null!;
+    public RoleEntity Role { get; set; } = null!;
 }

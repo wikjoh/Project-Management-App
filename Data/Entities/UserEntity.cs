@@ -29,6 +29,6 @@ public class UserEntity
 
 
 
-    public ICollection<UserRolesEntity> UserRoles { get; set; } = [];
+    public ICollection<UserRoleEntity> UserRoles { get; set; } = [];
     public ICollection<ProjectEntity> Projects { get; set; } = [];
 }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250207144740_init")]
-    partial class init
+    [Migration("20250208023406_Update entity names")]
+    partial class Updateentitynames
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -155,7 +155,7 @@ namespace Data.Migrations
                     b.ToTable("ProjectStatuses");
                 });
 
-            modelBuilder.Entity("Data.Entities.RolesEntity", b =>
+            modelBuilder.Entity("Data.Entities.RoleEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -248,7 +248,7 @@ namespace Data.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Data.Entities.UserRolesEntity", b =>
+            modelBuilder.Entity("Data.Entities.UserRoleEntity", b =>
                 {
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -320,9 +320,9 @@ namespace Data.Migrations
                     b.Navigation("Unit");
                 });
 
-            modelBuilder.Entity("Data.Entities.UserRolesEntity", b =>
+            modelBuilder.Entity("Data.Entities.UserRoleEntity", b =>
                 {
-                    b.HasOne("Data.Entities.RolesEntity", "Role")
+                    b.HasOne("Data.Entities.RoleEntity", "Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -351,7 +351,7 @@ namespace Data.Migrations
                     b.Navigation("Projects");
                 });
 
-            modelBuilder.Entity("Data.Entities.RolesEntity", b =>
+            modelBuilder.Entity("Data.Entities.RoleEntity", b =>
                 {
                     b.Navigation("UserRoles");
                 });

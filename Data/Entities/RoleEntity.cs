@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Data.Entities;
 
-public class RolesEntity
+public class RoleEntity
 {
     [Key]
     public int Id { get; set; }
@@ -14,5 +14,5 @@ public class RolesEntity
 
 
 
-    public ICollection<UserRolesEntity> UserRoles { get; set; } = [];
+    public ICollection<UserRoleEntity> UserRoles { get; set; } = [];
 }
