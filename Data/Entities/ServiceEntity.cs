@@ -9,6 +9,7 @@ public class ServiceEntity
     public int Id { get; set; }
 
     [Required]
+    [Column(TypeName = "nvarchar(100)")]
     public string Name { get; set; } = null!;
 
     [Required]
