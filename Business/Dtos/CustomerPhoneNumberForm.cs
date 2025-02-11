@@ -2,7 +2,7 @@
 
 namespace Business.Dtos;
 
-public class CustomerPhoneNumberUpdateForm
+public class CustomerPhoneNumberForm
 {
     [Required]
     public int CustomerId { get; set; }
