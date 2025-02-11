@@ -1,12 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Business.Models;
+﻿namespace Business.Models;
 
 public class CustomerModel
 {
     public int Id { get; set; }
 
-    [Required]
     public bool IsCompany { get; set; }
 
     public string? FirstName { get; set; }

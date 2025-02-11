@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Business.Models;
+﻿namespace Business.Models;
 
 public class RoleModel
 {
