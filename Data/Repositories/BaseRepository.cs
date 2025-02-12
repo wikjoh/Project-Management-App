@@ -64,6 +64,14 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
         return entities;
     }
 
+    public virtual async Task<IEnumerable<TEntity>> GetAllWhereAsync(Expression<Func<TEntity, bool>> expression)
+    {
+        var entities = await _dbSet
+            .Where(expression)
+            .ToListAsync();
+        return entities;
+    }
+
     public virtual async Task<TEntity?> GetOneAsync(Expression<Func<TEntity, bool>> expression)
     {
         var entity = await _dbSet.FirstOrDefaultAsync(expression);
@@ -72,7 +80,15 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
 
     public virtual async Task<bool?> ExistsAsync(Expression<Func<TEntity, bool>> expression)
     {
+        try
+        {
             return await _dbSet.AnyAsync(expression);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error checking if {nameof(TEntity)} exists. {ex.Message}");
+            return null;
+        }
     }
 
 
@@ -87,7 +103,6 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
         {
             Debug.WriteLine($"Error updating {nameof(TEntity)} entity. {ex.Message}");
         }
-
     }
 
 
@@ -102,7 +117,6 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
         {
             Debug.WriteLine($"Error deleting {nameof(TEntity)} entity. {ex.Message}");
         }
-
     }
 
 

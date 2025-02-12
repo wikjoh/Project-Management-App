@@ -10,6 +10,7 @@ public interface IBaseRepository<TEntity> where TEntity : class
     Task CreateAsync(TEntity entity);
 
     Task<IEnumerable<TEntity>> GetAllAsync();
+    Task<IEnumerable<TEntity>> GetAllWhereAsync(Expression<Func<TEntity, bool>> expression);
     Task<TEntity?> GetOneAsync(Expression<Func<TEntity, bool>> expression);
     Task<bool?> ExistsAsync(Expression<Func<TEntity, bool>> expression);
 
