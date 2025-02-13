@@ -2,9 +2,7 @@
 using Business.Factories;
 using Business.Interfaces;
 using Business.Models;
-using Data.Entities;
 using Data.Interfaces;
-using Data.Repositories;
 using System.Diagnostics;
 
 namespace Business.Services;
@@ -17,7 +15,7 @@ public class CustomerPhoneNumberService(ICustomerPhoneNumberRepository customerP
     // CREATE
     public async Task<bool> AddPhoneNumberAsync(CustomerPhoneNumberForm form)
     {
-        bool? phoneNumberExists = await _customerPhoneNumberRepository.ExistsAsync(x => x.PhoneNumber == form.PhoneNumber);
+        bool? phoneNumberExists = await _customerPhoneNumberRepository.ExistsAsync(x => x.PhoneNumber == form.PhoneNumber && x.CustomerId == form.CustomerId);
         if (phoneNumberExists == true || form == null)
             return false;
 
