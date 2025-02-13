@@ -3,6 +3,7 @@ using Business.Factories;
 using Business.Interfaces;
 using Business.Models;
 using Data.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace Business.Services;
@@ -48,23 +49,26 @@ public class CustomerService(ICustomerRepository customerRepository, ICustomerPh
 
 
     // READ
-    public async Task<IEnumerable<CustomerModel>?> GetAllCustomersAsync()
+    public async Task<IEnumerable<CustomerModel>?> GetAllWithPhoneAsync()
     {
-        var customers = await _customerRepository.GetAllAsync();
+        var customers = await _customerRepository.GetAllAsync(q => q.Include(c => c.PhoneNumbers));
+
         return customers != null
             ? customers.Select(x => CustomerFactory.Create(x))
             : [];
     }
 
-    public async Task<CustomerModel?> GetCustomerByIdAsync(int id)
+    public async Task<CustomerModel?> GetByIdWithPhoneAsync(int id)
     {
-        var customerEntity = await _customerRepository.GetOneAsync(x => x.Id == id);
+        var customerEntity = await _customerRepository.GetOneAsync(x => x.Id == id, q => q.Include(c => c.PhoneNumbers));
+
         return customerEntity != null ? CustomerFactory.Create(customerEntity) : null;
     }
 
-    public async Task<CustomerModel?> GetCustomerByEmailAsync(string emailAddress)
+    public async Task<CustomerModel?> GetByEmailWithPhoneAsync(string emailAddress)
     {
-        var customerEntity = await _customerRepository.GetOneAsync(x => x.EmailAddress == emailAddress);
+        var customerEntity = await _customerRepository.GetOneAsync(x => x.EmailAddress == emailAddress, q => q.Include(c => c.PhoneNumbers));
+
         return customerEntity != null ? CustomerFactory.Create(customerEntity) : null;
     }
 

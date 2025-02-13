@@ -15,4 +15,6 @@ public class CustomerModel
     public string DisplayName { get; set; } = null!;
 
     public string EmailAddress { get; set; } = null!;
+
+    public List<CustomerPhoneNumberModel> PhoneNumbers { get; set; } = [];
 }

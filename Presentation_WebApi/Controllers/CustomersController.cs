@@ -21,27 +21,27 @@ public class CustomersController(ICustomerService customerService) : ControllerB
         return result ? Ok() : Problem();
     }
 
-    // Get all customers
+    // Get all customers including phone numbers
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var result = await _customerService.GetAllCustomersAsync();
+        var result = await _customerService.GetAllWithPhoneAsync();
         return Ok(result);
     }
 
-    // Get customers by email
+    // Get customer by email including phone number
     [HttpGet("email/{email}")]
     public async Task<IActionResult> GetByEmail(string email)
     {
-        var result = await _customerService.GetCustomerByEmailAsync(email);
+        var result = await _customerService.GetByEmailWithPhoneAsync(email);
         return result != null ? Ok(result) : NotFound();
     }
 
-    // Get customer by id
+    // Get customer by id including phone number
     [HttpGet("id/{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var result = await _customerService.GetCustomerByIdAsync(id);
+        var result = await _customerService.GetByIdWithPhoneAsync(id);
         return result != null ? Ok(result) : NotFound();
     }
 
