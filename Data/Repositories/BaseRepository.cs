@@ -9,8 +9,8 @@ namespace Data.Repositories;
 
 public abstract class BaseRepository<TEntity>(DataContext context) : IBaseRepository<TEntity> where TEntity : class
 {
-    private readonly DataContext _context = context;
-    private readonly DbSet<TEntity> _dbSet = context.Set<TEntity>();
+    protected readonly DataContext _context = context;
+    protected readonly DbSet<TEntity> _dbSet = context.Set<TEntity>();
     private IDbContextTransaction _transaction = null!;
 
 
@@ -58,23 +58,40 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IBaseReposi
 
 
     // READ
-    public virtual async Task<IEnumerable<TEntity>> GetAllAsync()
+    public virtual async Task<IEnumerable<TEntity>> GetAllAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>>? includeExpression = null)
     {
-        var entities = await _dbSet.ToListAsync();
+        IQueryable<TEntity> query = _dbSet;
+
+        if (includeExpression != null)
+            query = includeExpression(query);
+
+        var entities = await query.ToListAsync();
         return entities;
     }
 
-    public virtual async Task<IEnumerable<TEntity>> GetAllWhereAsync(Expression<Func<TEntity, bool>> expression)
+    public virtual async Task<IEnumerable<TEntity>> GetAllWhereAsync(Expression<Func<TEntity, bool>> expression, Func<IQueryable<TEntity>, IQueryable<TEntity>>? includeExpression = null)
     {
-        var entities = await _dbSet
+        IQueryable<TEntity> query = _dbSet;
+
+        if (includeExpression != null)
+            query = includeExpression(query);
+
+        var entities = await query
             .Where(expression)
             .ToListAsync();
+
         return entities;
     }
 
-    public virtual async Task<TEntity?> GetOneAsync(Expression<Func<TEntity, bool>> expression)
+    public virtual async Task<TEntity?> GetOneAsync(Expression<Func<TEntity, bool>> expression, Func<IQueryable<TEntity>, IQueryable<TEntity>>? includeExpression = null)
     {
-        var entity = await _dbSet.FirstOrDefaultAsync(expression);
+        IQueryable<TEntity> query = _dbSet;
+
+        if (includeExpression != null)
+            query = includeExpression(query);
+
+        var entity = await query.FirstOrDefaultAsync(expression);
+
         return entity;
     }
 
