@@ -6,5 +6,5 @@ namespace Data.Repositories;
 
 public class ProjectStatusRepository(DataContext context) : BaseRepository<ProjectStatusEntity>(context), IProjectStatusRepository
 {
-    private readonly DataContext _context = context;
+    
 }
