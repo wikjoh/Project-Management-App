@@ -1,33 +1,32 @@
+using Business.Interfaces;
+using Business.Services;
+using Data.Contexts;
+using Data.Interfaces;
+using Data.Repositories;
+using Microsoft.EntityFrameworkCore;
 
-namespace Presentation_WebApi;
+namespace WebApi;
 
-public class Program
+internal class Program
 {
-    public static void Main(string[] args)
+    static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
-        // Add services to the container.
-
         builder.Services.AddControllers();
-        // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
+
+        builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer(@"Data Source=192.168.200.50;Database=project_mgmt;User ID=project_mgmt;Password=BytMig123!;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False"));
+        builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+        builder.Services.AddScoped<ICustomerService, CustomerService>();
+        builder.Services.AddScoped<ICustomerPhoneNumberRepository, CustomerPhoneNumberRepository>();
+        builder.Services.AddScoped<ICustomerPhoneNumberService, CustomerPhoneNumberService>();
 
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            app.MapOpenApi();
-        }
-
+        app.MapOpenApi();
         app.UseHttpsRedirection();
-
-        app.UseAuthorization();
-
-
+        app.UseAuthentication();
         app.MapControllers();
-
         app.Run();
     }
 }
