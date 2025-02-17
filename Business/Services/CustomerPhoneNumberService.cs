@@ -2,8 +2,8 @@
 using Business.Factories;
 using Business.Interfaces;
 using Business.Models;
+using Business.Models.ServiceResult;
 using Data.Interfaces;
-using System.Diagnostics;
 
 namespace Business.Services;
 
@@ -13,84 +13,79 @@ public class CustomerPhoneNumberService(ICustomerPhoneNumberRepository customerP
 
 
     // CREATE
-    public async Task<bool> AddPhoneNumberAsync(CustomerPhoneNumberForm form)
+    public async Task<IServiceResult> AddPhoneNumberAsync(CustomerPhoneNumberForm form)
     {
+        if (form == null)
+            return ServiceResult.BadRequest("Form cannot be empty.");
+
         bool? phoneNumberExists = await _customerPhoneNumberRepository.ExistsAsync(x => x.PhoneNumber == form.PhoneNumber && x.CustomerId == form.CustomerId);
-        if (phoneNumberExists == true || form == null)
-            return false;
+        if (phoneNumberExists == true)
+            return ServiceResult.AlreadyExists($"Phone number {form.PhoneNumber} already exists on customer {form.CustomerId}.");
+        if (phoneNumberExists == null)
+            return ServiceResult.InternalServerError("Failed verifyingg if phone number exists");
 
-        try
-        {
-            var entity = CustomerPhoneNumberFactory.Create(form);
+        var entity = CustomerPhoneNumberFactory.Create(form);
 
-            await _customerPhoneNumberRepository.CreateAsync(entity);
-            await _customerPhoneNumberRepository.SaveAsync();
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Failed to add phone number. {ex.Message}");
-            return false;
-        }
+        await _customerPhoneNumberRepository.CreateAsync(entity);
+        await _customerPhoneNumberRepository.SaveAsync();
+
+        var phoneNumber = CustomerPhoneNumberFactory.Create(entity);
+        return ServiceResult<CustomerPhoneNumberModel>.Ok(phoneNumber);
     }
 
 
     // READ
-    public async Task<IEnumerable<CustomerPhoneNumberModel>> GetAllPhoneNumbersByCustomerIdAsync(int id)
+    public async Task<IServiceResult> GetAllPhoneNumbersByCustomerIdAsync(int id)
     {
         var phoneNumbers = await _customerPhoneNumberRepository.GetAllWhereAsync(x => x.CustomerId == id);
-        return phoneNumbers != null ? phoneNumbers.Select(x => CustomerPhoneNumberFactory.Create(x)) : [];
+        var phoneNumbersList = phoneNumbers != null ? phoneNumbers.Select(x => CustomerPhoneNumberFactory.Create(x)) : [];
+
+        return ServiceResult<IEnumerable<CustomerPhoneNumberModel>>.Ok(phoneNumbersList);
     }
 
 
     // UPDATE
-    public async Task<CustomerPhoneNumberModel?> UpdatePhoneNumberAsync(CustomerPhoneNumberForm form)
+    public async Task<IServiceResult> UpdatePhoneNumberAsync(CustomerPhoneNumberForm form)
     {
+        if (form == null)
+            return ServiceResult.BadRequest("Form cannot be empty.");
+
         var existing = await _customerPhoneNumberRepository.GetOneAsync(x => x.PhoneNumber == form.PhoneNumber && x.CustomerId == form.CustomerId);
-        if (existing == null || form == null)
-            return null;
+        if (existing == null)
+            return ServiceResult.NotFound($"Phone number {form.PhoneNumber} not found on customerId {form.CustomerId}");
 
         existing.IsWorkNumber = form.IsWorkNumber;
         existing.IsCellNumber = form.IsCellNumber;
         existing.IsHomeNumber = form.IsHomeNumber;
 
-        try
-        {
-            _customerPhoneNumberRepository.Update(existing);
-            await _customerPhoneNumberRepository.SaveAsync();
 
-            var updated = await _customerPhoneNumberRepository.GetOneAsync(x => x.PhoneNumber == form.PhoneNumber && x.CustomerId == form.CustomerId);
-            return CustomerPhoneNumberFactory.Create(updated!);
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Failed updating phone number. {ex.Message}");
-            return null;
-        }
+        _customerPhoneNumberRepository.Update(existing);
+        var result = await _customerPhoneNumberRepository.SaveAsync() > 0;
+        if (!result)
+            return ServiceResult.InternalServerError("Failed updating phone number.");
 
+        var updated = await _customerPhoneNumberRepository.GetOneAsync(x => x.PhoneNumber == form.PhoneNumber && x.CustomerId == form.CustomerId);
+        return ServiceResult<CustomerPhoneNumberModel?>.Ok(CustomerPhoneNumberFactory.Create(updated!));
     }
 
 
     // DELETE
-    public async Task<bool> DeletePhoneNumber(CustomerPhoneNumberModel model)
+    public async Task<IServiceResult> DeletePhoneNumber(CustomerPhoneNumberModel model)
     {
-        var phoneEntity = await _customerPhoneNumberRepository.GetOneAsync(x => x.PhoneNumber == model.PhoneNumber && x.CustomerId == model.CustomerId);
-        if (phoneEntity == null || model == null)
-            return false;
+        if (model == null)
+            return ServiceResult.BadRequest("Parameter cannot be empty.");
 
-        try
-        {
-            _customerPhoneNumberRepository.Delete(phoneEntity);
-            var result = await _customerPhoneNumberRepository.SaveAsync();
-            if (result == 1)
-                return true;
-            else
-                return false;
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Failed deleting phone number. {ex.Message}");
-            return false;
-        }
+        var phoneEntity = await _customerPhoneNumberRepository.GetOneAsync(x => x.PhoneNumber == model.PhoneNumber && x.CustomerId == model.CustomerId);
+        if (phoneEntity == null)
+            return ServiceResult.NotFound("Phone number not found.");
+
+
+        _customerPhoneNumberRepository.Delete(phoneEntity);
+        var result = await _customerPhoneNumberRepository.SaveAsync() > 0;
+        if (!result)
+            return ServiceResult.InternalServerError("Deleting phone number failed.");
+
+        return ServiceResult.Ok();
+
     }
 }

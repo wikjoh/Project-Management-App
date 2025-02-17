@@ -37,7 +37,7 @@ public class CustomerService(ICustomerRepository customerRepository, ICustomerPh
 
             form.PhoneNumberForm.CustomerId = customerEntity.Id;
             var phoneNumberResult = await _customerPhoneNumberService.AddPhoneNumberAsync(form.PhoneNumberForm);
-            if (!phoneNumberResult) throw new Exception("Failed to create phone number entity.");
+            if (!phoneNumberResult.Success) throw new Exception("Failed to create phone number entity.");
 
             await _customerRepository.CommitTransactionAsync();
             var createdCustomerWithPhoneNumber = CustomerFactory.Create((await _customerRepository.GetOneAsync(x => x.Id == customerEntity.Id, q => q.Include(c => c.PhoneNumbers)))!);
@@ -48,7 +48,7 @@ public class CustomerService(ICustomerRepository customerRepository, ICustomerPh
             string errorMessage = $"Failed creating customer. Rolling back. {ex.Message}";
             Debug.WriteLine(errorMessage);
             await _customerRepository.RollbackTransactionAsync();
-            return ServiceResult.BadRequest(errorMessage);
+            return ServiceResult.InternalServerError(errorMessage);
         }
     }
 
@@ -89,6 +89,9 @@ public class CustomerService(ICustomerRepository customerRepository, ICustomerPh
     // UPDATE
     public async Task<IServiceResult> UpdateCustomerAsync(CustomerUpdateForm form)
     {
+        if (form == null)
+            return ServiceResult.BadRequest("Form cannot be empty.");
+
         var customer = await _customerRepository.GetOneAsync(x => x.Id == form.Id);
 
         if (customer == null)
