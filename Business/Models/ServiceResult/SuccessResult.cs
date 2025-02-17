@@ -1,6 +1,6 @@
-﻿namespace Business.Helpers.ResultHandler;
+﻿namespace Business.Models.ServiceResult;
 
-public class SuccessResult : ResultHandler
+public class SuccessResult : ServiceResult
 {
     public SuccessResult(int statusCode)
     {

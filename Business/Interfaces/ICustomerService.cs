@@ -4,11 +4,11 @@ using Business.Models;
 namespace Business.Interfaces;
 public interface ICustomerService
 {
-    Task<bool> CreateCustomerAsync(CustomerRegistrationForm form);
-    Task<bool> DeleteCustomerByEmailAsync(string email);
-    Task<bool> DeleteCustomerByIdAsync(int id);
-    Task<IEnumerable<CustomerModel>?> GetAllWithPhoneAsync();
-    Task<CustomerModel?> GetByEmailWithPhoneAsync(string emailAddress);
-    Task<CustomerModel?> GetByIdWithPhoneAsync(int id);
-    Task<CustomerModel?> UpdateCustomerAsync(CustomerUpdateForm form);
+    Task<IServiceResult> CreateCustomerAsync(CustomerRegistrationForm form);
+    Task<IServiceResult> DeleteCustomerByEmailAsync(string email);
+    Task<IServiceResult> DeleteCustomerByIdAsync(int id);
+    Task<IServiceResult> GetAllWithPhoneAsync();
+    Task<IServiceResult> GetByEmailWithPhoneAsync(string emailAddress);
+    Task<IServiceResult> GetByIdWithPhoneAsync(int id);
+    Task<IServiceResult> UpdateCustomerAsync(CustomerUpdateForm form);
 }

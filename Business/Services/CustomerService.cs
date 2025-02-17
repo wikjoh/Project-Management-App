@@ -2,6 +2,7 @@
 using Business.Factories;
 using Business.Interfaces;
 using Business.Models;
+using Business.Models.ServiceResult;
 using Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -15,11 +16,14 @@ public class CustomerService(ICustomerRepository customerRepository, ICustomerPh
 
 
     // CREATE
-    public async Task<bool> CreateCustomerAsync(CustomerRegistrationForm form)
+    public async Task<IServiceResult> CreateCustomerAsync(CustomerRegistrationForm form)
     {
+        if (form == null)
+            return ServiceResult.BadRequest("Invalid registration form.");
+
         bool? customerExists = await _customerRepository.ExistsAsync(x => x.EmailAddress == form.EmailAddress);
         if (customerExists == true)
-            return false;
+            return ServiceResult.AlreadyExists("Customer with given email address already exists.");
 
         var customerEntity = CustomerFactory.Create(form);
 
@@ -28,7 +32,7 @@ public class CustomerService(ICustomerRepository customerRepository, ICustomerPh
         try
         {
             await _customerRepository.CreateAsync(customerEntity);
-            var customerResult = (await _customerRepository.SaveAsync() == 1) ? true : false;
+            var customerResult = await _customerRepository.SaveAsync() > 0;
             if (!customerResult) throw new Exception("Failed to create customer entity.");
 
             form.PhoneNumberForm.CustomerId = customerEntity.Id;
@@ -36,49 +40,59 @@ public class CustomerService(ICustomerRepository customerRepository, ICustomerPh
             if (!phoneNumberResult) throw new Exception("Failed to create phone number entity.");
 
             await _customerRepository.CommitTransactionAsync();
-            return true;
+            var createdCustomerWithPhoneNumber = CustomerFactory.Create((await _customerRepository.GetOneAsync(x => x.Id == customerEntity.Id, q => q.Include(c => c.PhoneNumbers)))!);
+            return ServiceResult<CustomerModel>.Created(createdCustomerWithPhoneNumber);
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Failed creating customer. {ex.Message}");
+            string errorMessage = $"Failed creating customer. Rolling back. {ex.Message}";
+            Debug.WriteLine(errorMessage);
             await _customerRepository.RollbackTransactionAsync();
-            return false;
+            return ServiceResult.BadRequest(errorMessage);
         }
-
     }
 
 
     // READ
-    public async Task<IEnumerable<CustomerModel>?> GetAllWithPhoneAsync()
+    public async Task<IServiceResult> GetAllWithPhoneAsync()
     {
         var customers = await _customerRepository.GetAllAsync(q => q.Include(c => c.PhoneNumbers));
+        customers ??= [];
 
-        return customers != null
-            ? customers.Select(x => CustomerFactory.Create(x))
-            : [];
+        var customerListWithPhone = ServiceResult<IEnumerable<CustomerModel>?>.Ok(customers.Select(x => CustomerFactory.Create(x)));
+        return customerListWithPhone;
     }
 
-    public async Task<CustomerModel?> GetByIdWithPhoneAsync(int id)
+    public async Task<IServiceResult> GetByIdWithPhoneAsync(int id)
     {
         var customerEntity = await _customerRepository.GetOneAsync(x => x.Id == id, q => q.Include(c => c.PhoneNumbers));
 
-        return customerEntity != null ? CustomerFactory.Create(customerEntity) : null;
+        if (customerEntity == null)
+            return ServiceResult.NotFound($"Customer with id {id} not found.");
+
+        var customerWithPhone = CustomerFactory.Create(customerEntity);
+        return ServiceResult<CustomerModel>.Ok(customerWithPhone);
     }
 
-    public async Task<CustomerModel?> GetByEmailWithPhoneAsync(string emailAddress)
+    public async Task<IServiceResult> GetByEmailWithPhoneAsync(string emailAddress)
     {
         var customerEntity = await _customerRepository.GetOneAsync(x => x.EmailAddress == emailAddress, q => q.Include(c => c.PhoneNumbers));
 
-        return customerEntity != null ? CustomerFactory.Create(customerEntity) : null;
+        if (customerEntity == null)
+            return ServiceResult.NotFound($"Customer with email address {emailAddress} not found.");
+
+        var customerWithPhone = CustomerFactory.Create(customerEntity);
+        return ServiceResult<CustomerModel>.Ok(customerWithPhone);
     }
 
 
     // UPDATE
-    public async Task<CustomerModel?> UpdateCustomerAsync(CustomerUpdateForm form)
+    public async Task<IServiceResult> UpdateCustomerAsync(CustomerUpdateForm form)
     {
         var customer = await _customerRepository.GetOneAsync(x => x.Id == form.Id);
+
         if (customer == null)
-            return null;
+            return ServiceResult.NotFound($"Customer not found.");
 
         customer.IsCompany = form.IsCompany;
         customer.FirstName = form.FirstName;
@@ -87,36 +101,44 @@ public class CustomerService(ICustomerRepository customerRepository, ICustomerPh
         customer.EmailAddress = form.EmailAddress;
 
         _customerRepository.Update(customer);
-        await _customerRepository.SaveAsync();
+        var result = await _customerRepository.SaveAsync() > 0;
+        if (!result)
+            return ServiceResult.InternalServerError("Updating customer failed.");
 
         customer = await _customerRepository.GetOneAsync(x => x.Id == form.Id);
-        return customer != null
+        return ServiceResult<CustomerModel?>.Ok(customer != null
             ? CustomerFactory.Create(customer)
-            : null;
+            : null);
     }
 
 
 
     // DELETE
-    public async Task<bool> DeleteCustomerByIdAsync(int id)
+    public async Task<IServiceResult> DeleteCustomerByIdAsync(int id)
     {
         var customer = await _customerRepository.GetOneAsync(x => x.Id == id);
         if (customer == null)
-            return false;
+            return ServiceResult.NotFound($"Customer with id {id} not found.");
 
         _customerRepository.Delete(customer);
-        var result = await _customerRepository.SaveAsync();
-        return result == 1;
+        var result = await _customerRepository.SaveAsync() > 0;
+        if (!result)
+            return ServiceResult.InternalServerError("Deleting customer failed.");
+
+        return ServiceResult.Ok();
     }
 
-    public async Task<bool> DeleteCustomerByEmailAsync(string email)
+    public async Task<IServiceResult> DeleteCustomerByEmailAsync(string emailAddress)
     {
-        var customer = await _customerRepository.GetOneAsync(x => x.EmailAddress == email);
+        var customer = await _customerRepository.GetOneAsync(x => x.EmailAddress == emailAddress);
         if (customer == null)
-            return false;
+            return ServiceResult.NotFound($"Customer with email address {emailAddress} not found.");
 
         _customerRepository.Delete(customer);
-        var result = await _customerRepository.SaveAsync();
-        return result == 1;
+        var result = await _customerRepository.SaveAsync() > 0;
+        if (!result)
+            return ServiceResult.InternalServerError("Deleting customer failed.");
+
+        return ServiceResult.Ok();
     }
 }

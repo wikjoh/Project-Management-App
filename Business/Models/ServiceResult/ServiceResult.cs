@@ -1,8 +1,8 @@
 ﻿using Business.Interfaces;
 
-namespace Business.Helpers.ResultHandler;
+namespace Business.Models.ServiceResult;
 
-public abstract class ResultHandler : IResultHandler
+public abstract class ServiceResult : IServiceResult
 {
     public bool Success { get; protected set; }
 
@@ -11,35 +11,40 @@ public abstract class ResultHandler : IResultHandler
     public string? ErrorMessage { get; protected set; }
 
 
-    public static ResultHandler Ok()
+    public static ServiceResult Ok()
     {
         return new SuccessResult(200);
     }
 
-    public static ResultHandler BadRequest(string message)
+    public static ServiceResult BadRequest(string message)
     {
         return new ErrorResult(400, message);
     }
 
-    public static ResultHandler NotFound(string message)
+    public static ServiceResult NotFound(string message)
     {
         return new ErrorResult(404, message);
     }
 
-    public static ResultHandler AlreadyExists(string message)
+    public static ServiceResult AlreadyExists(string message)
     {
         return new ErrorResult(409, message);
+    }
+
+    public static ServiceResult InternalServerError(string message)
+    {
+        return new ErrorResult(500, message);
     }
 }
 
 
-public class Result<T> : ResultHandler
+public class ServiceResult<T> : ServiceResult
 {
     public T? Data { get; private set; }
 
-    public static Result<T> Ok(T? data)
+    public static ServiceResult<T> Ok(T? data)
     {
-        return new Result<T>
+        return new ServiceResult<T>
         {
             Success = true,
             StatusCode = 200,
@@ -47,9 +52,9 @@ public class Result<T> : ResultHandler
         };
     }
 
-    public static Result<T> Created(T? data)
+    public static ServiceResult<T> Created(T? data)
     {
-        return new Result<T>
+        return new ServiceResult<T>
         {
             Success = true,
             StatusCode = 201,

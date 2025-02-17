@@ -1,6 +1,6 @@
 ﻿namespace Business.Interfaces;
 
-public interface IResultHandler
+public interface IServiceResult
 {
     bool Success { get; }
     int StatusCode { get; }
