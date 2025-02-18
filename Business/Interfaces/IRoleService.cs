@@ -1,9 +1,10 @@
 ﻿using Business.Dtos;
+using Business.Models;
 
 namespace Business.Interfaces;
 public interface IRoleService
 {
     Task<IServiceResult> CreateRoleAsync(RoleRegistrationForm form);
-    Task<IServiceResult> DeleteById(int id);
-    Task<IServiceResult> GetAllRoles();
+    Task<IServiceResult> DeleteRoleAsync(RoleModel model);
+    Task<IServiceResult> GetAllRolesAsync();
 }

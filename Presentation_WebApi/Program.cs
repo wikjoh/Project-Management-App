@@ -20,6 +20,8 @@ internal class Program
         builder.Services.AddScoped<ICustomerService, CustomerService>();
         builder.Services.AddScoped<ICustomerPhoneNumberRepository, CustomerPhoneNumberRepository>();
         builder.Services.AddScoped<ICustomerPhoneNumberService, CustomerPhoneNumberService>();
+        builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+        builder.Services.AddScoped<IRoleService, RoleService>();
 
         var app = builder.Build();
 

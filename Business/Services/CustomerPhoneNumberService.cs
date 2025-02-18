@@ -70,7 +70,7 @@ public class CustomerPhoneNumberService(ICustomerPhoneNumberRepository customerP
 
 
     // DELETE
-    public async Task<IServiceResult> DeletePhoneNumber(CustomerPhoneNumberModel model)
+    public async Task<IServiceResult> DeletePhoneNumberAsync(CustomerPhoneNumberModel model)
     {
         if (model == null)
             return ServiceResult.BadRequest("Parameter cannot be empty.");

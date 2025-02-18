@@ -38,7 +38,7 @@ public class CustomerPhoneNumbersController(ICustomerPhoneNumberService customer
     [HttpDelete]
     public async Task<IServiceResult> Delete(CustomerPhoneNumberModel form)
     {
-        var result = await _customerPhoneNumberService.DeletePhoneNumber(form);
+        var result = await _customerPhoneNumberService.DeletePhoneNumberAsync(form);
         return result;
     }
 }

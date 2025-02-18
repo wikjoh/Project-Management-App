@@ -37,7 +37,7 @@ public class RoleService(IRoleRepository roleRepository) : IRoleService
 
 
     // READ
-    public async Task<IServiceResult> GetAllRoles()
+    public async Task<IServiceResult> GetAllRolesAsync()
     {
         var roles = await _roleRepository.GetAllAsync();
 
@@ -48,11 +48,14 @@ public class RoleService(IRoleRepository roleRepository) : IRoleService
 
 
     // DELETE
-    public async Task<IServiceResult> DeleteById(int id)
+    public async Task<IServiceResult> DeleteRoleAsync(RoleModel model)
     {
-        var role = await _roleRepository.GetOneAsync(x => x.Id == id);
+        if (model == null)
+            return ServiceResult.BadRequest("Form cannot be empty.");
+
+        var role = await _roleRepository.GetOneAsync(x => x.Id == model.Id);
         if (role == null)
-            return ServiceResult.NotFound($"Role with id {id} does not exist.");
+            return ServiceResult.NotFound($"Role with id {model.Id} does not exist.");
 
         _roleRepository.Delete(role);
         var result = await _roleRepository.SaveAsync() > 0;
