@@ -1,6 +1,4 @@
-﻿using Data.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Business.Dtos;
 
@@ -21,4 +19,7 @@ public class UserRegistrationForm
     [EmailAddress]
     [MaxLength(200, ErrorMessage = "Email address cannot exceed 200 characters.")]
     public string EmailAddress { get; set; } = null!;
+
+    [Required]
+    public List<int> RoleIds { get; set; } = [];
 }

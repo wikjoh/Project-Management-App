@@ -11,4 +11,6 @@ public class UserModel
     public string DisplayName { get; set; } = null!;
 
     public string EmailAddress { get; set; } = null!;
+
+    public List<RoleModel> UserRoles { get; set; } = [];
 }
