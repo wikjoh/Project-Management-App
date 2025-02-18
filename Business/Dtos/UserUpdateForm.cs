@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Business.Dtos;
 
@@ -22,4 +21,7 @@ public class UserUpdateForm
     [EmailAddress]
     [MaxLength(200, ErrorMessage = "Email address cannot exceed 200 characters.")]
     public string EmailAddress { get; set; } = null!;
+
+    [Required]
+    public IEnumerable<int> RoleIds { get; set; } = [];
 }

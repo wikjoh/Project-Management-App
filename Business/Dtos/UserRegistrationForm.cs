@@ -21,5 +21,5 @@ public class UserRegistrationForm
     public string EmailAddress { get; set; } = null!;
 
     [Required]
-    public List<int> RoleIds { get; set; } = [];
+    public IEnumerable<int> RoleIds { get; set; } = [];
 }
