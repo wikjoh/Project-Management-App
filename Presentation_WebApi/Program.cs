@@ -22,6 +22,8 @@ internal class Program
         builder.Services.AddScoped<ICustomerPhoneNumberService, CustomerPhoneNumberService>();
         builder.Services.AddScoped<IRoleRepository, RoleRepository>();
         builder.Services.AddScoped<IRoleService, RoleService>();
+        builder.Services.AddScoped<IUserRoleRepository, UserRoleRepository>();
+        builder.Services.AddScoped<IUserRoleService, UserRoleService>();
 
         var app = builder.Build();
 
