@@ -12,5 +12,5 @@ public class UserModel
 
     public string EmailAddress { get; set; } = null!;
 
-    public List<RoleModel> UserRoles { get; set; } = [];
+    public List<RoleModel> Roles { get; set; } = [];
 }
