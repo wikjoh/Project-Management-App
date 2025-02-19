@@ -1,5 +1,7 @@
 ﻿using Business.Dtos;
 using Business.Interfaces;
+using Business.Models;
+using Business.Models.ServiceResult;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation_WebApi.Controllers;
@@ -11,57 +13,78 @@ public class CustomersController(ICustomerService customerService) : ControllerB
 
     // Create Customer with phone number
     [HttpPost]
-    public async Task<IServiceResult> Create(CustomerRegistrationForm form)
+    public async Task<IActionResult> Create(CustomerRegistrationForm form)
     {
         var result = await _customerService.CreateCustomerAsync(form);
-        return result;
+
+        return result.Success
+            ? CreatedAtAction(nameof(this.Create), ((ServiceResult<CustomerModel>)result).Data)
+            : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
     // Get all customers including phone numbers
     [HttpGet]
-    public async Task<IServiceResult> GetAll()
+    public async Task<IActionResult> GetAll()
     {
         var result = await _customerService.GetAllWithPhoneAsync();
-        return result;
+
+        return result.Success
+            ? Ok(((ServiceResult<IEnumerable<CustomerModel>>)result).Data)
+            : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
     // Get customer by email including phone number
     [HttpGet("email/{email}")]
-    public async Task<IServiceResult> GetByEmail(string email)
+    public async Task<IActionResult> GetByEmail(string email)
     {
         var result = await _customerService.GetByEmailWithPhoneAsync(email);
-        return result;
+
+        return result.Success
+            ? Ok(((ServiceResult<CustomerModel>)result).Data)
+            : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
     // Get customer by id including phone number
     [HttpGet("id/{id}")]
-    public async Task<IServiceResult> GetById(int id)
+    public async Task<IActionResult> GetById(int id)
     {
         var result = await _customerService.GetByIdWithPhoneAsync(id);
-        return result;
+
+        return result.Success
+            ? Ok(((ServiceResult<CustomerModel>)result).Data)
+            : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
     // Update customer
     [HttpPut()]
-    public async Task<IServiceResult> Update(CustomerUpdateForm form)
+    public async Task<IActionResult> Update(CustomerUpdateForm form)
     {
         var result = await _customerService.UpdateCustomerAsync(form);
-        return result;
+
+        return result.Success
+            ? Ok(((ServiceResult<CustomerModel>)result).Data)
+            : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
     // Delete customer by email
     [HttpDelete("email/{email}")]
-    public async Task<IServiceResult> DeleteByEmail(string email)
+    public async Task<IActionResult> DeleteByEmail(string email)
     {
         var result = await _customerService.DeleteCustomerByEmailAsync(email);
-        return result;
+
+        return result.Success
+            ? Ok("Customer deleted successfully.")
+            : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
     // Delete customer by id
     [HttpDelete("id/{id}")]
-    public async Task<IServiceResult> DeleteById(int id)
+    public async Task<IActionResult> DeleteById(int id)
     {
         var result = await _customerService.DeleteCustomerByIdAsync(id);
-        return result;
+
+        return result.Success
+            ? Ok("Customer deleted successfully.")
+            : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 }
