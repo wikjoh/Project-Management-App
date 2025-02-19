@@ -18,7 +18,7 @@ public class CustomersController(ICustomerService customerService) : ControllerB
         var result = await _customerService.CreateCustomerAsync(form);
 
         return result.Success
-            ? CreatedAtAction(nameof(this.Create), ((ServiceResult<CustomerModel>)result).Data)
+            ? CreatedAtAction(nameof(Create), ((ServiceResult<CustomerModel>)result).Data)
             : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 

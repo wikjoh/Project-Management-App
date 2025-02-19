@@ -1,6 +1,7 @@
 ﻿using Business.Dtos;
 using Business.Interfaces;
 using Business.Models;
+using Business.Models.ServiceResult;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation_WebApi.Controllers;
@@ -12,33 +13,45 @@ public class CustomerPhoneNumbersController(ICustomerPhoneNumberService customer
 
     // Add phone number
     [HttpPost]
-    public async Task<IServiceResult> Add(CustomerPhoneNumberForm form)
+    public async Task<IActionResult> Add(CustomerPhoneNumberForm form)
     {
         var result = await _customerPhoneNumberService.AddPhoneNumberAsync(form);
-        return result;
+        
+        return result.Success
+            ? CreatedAtAction(nameof(Add), ((ServiceResult<CustomerPhoneNumberModel>)result).Data)
+            : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
     // Get all phone numbers for specified customer id
     [HttpGet("customer-id/{id}")]
-    public async Task<IServiceResult> GetCustomerPhoneNumbers(int id)
+    public async Task<IActionResult> GetCustomerPhoneNumbers(int id)
     {
         var result = await _customerPhoneNumberService.GetAllPhoneNumbersByCustomerIdAsync(id);
-        return result;
+
+        return result.Success
+            ? Ok(((ServiceResult<IEnumerable<CustomerPhoneNumberModel>>)result).Data)
+            : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
     // Update phone number
     [HttpPut()]
-    public async Task<IServiceResult> Update(CustomerPhoneNumberForm form)
+    public async Task<IActionResult> Update(CustomerPhoneNumberForm form)
     {
         var result = await _customerPhoneNumberService.UpdatePhoneNumberAsync(form);
-        return result;
+
+        return result.Success
+            ? Ok(((ServiceResult<CustomerPhoneNumberModel>)result).Data)
+            : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
     // Delete phone number
     [HttpDelete]
-    public async Task<IServiceResult> Delete(CustomerPhoneNumberModel form)
+    public async Task<IActionResult> Delete(CustomerPhoneNumberModel form)
     {
         var result = await _customerPhoneNumberService.DeletePhoneNumberAsync(form);
-        return result;
+
+        return result.Success
+            ? Ok("Phone number deleted successfully.")
+            : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 }
