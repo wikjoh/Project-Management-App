@@ -14,27 +14,38 @@ public class RolesController(IRoleService roleService) : ControllerBase
 
     // Add role
     [HttpPost]
-    public async Task<IServiceResult> Add(RoleRegistrationForm form)
+    public async Task<IActionResult> Add(RoleRegistrationForm form)
     {
         var result = await _roleService.CreateRoleAsync(form);
-        return result;
+
+        return result.Success
+            ? CreatedAtAction(nameof(Add), ((ServiceResult<RoleModel>)result).Data)
+            : StatusCode(result.StatusCode, result.ErrorMessage);
+
+  
     }
 
 
     // Get all roles
     [HttpGet]
-    public async Task<IServiceResult> GetAllRoles()
+    public async Task<IActionResult> GetAllRoles()
     {
         var result = await _roleService.GetAllRolesAsync();
-        return result;
+
+        return result.Success
+            ? Ok(((ServiceResult<IEnumerable<RoleModel>>)result).Data)
+            : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
 
     // Delete role
     [HttpDelete]
-    public async Task<IServiceResult> DeleteRole(RoleModel form)
+    public async Task<IActionResult> DeleteRole(RoleModel form)
     {
         var result = await _roleService.DeleteRoleAsync(form);
-        return result;
+
+        return result.Success
+            ? Ok("Role deleted successfully.")
+            : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 }
