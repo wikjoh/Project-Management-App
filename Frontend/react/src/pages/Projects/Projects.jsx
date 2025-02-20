@@ -116,8 +116,12 @@ const Projects = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Description</TableCell>
+              <TableCell>Id</TableCell>
+              <TableCell>Project</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Customer</TableCell>
+              <TableCell>Service</TableCell>
+              <TableCell>Manager</TableCell>
               <TableCell>Start Date</TableCell>
               <TableCell>End Date</TableCell>
               <TableCell>Actions</TableCell>
@@ -126,9 +130,13 @@ const Projects = () => {
           <TableBody>
             {projects.map((project) => (
               <TableRow key={project.id}>
+                <TableCell>{project.id}</TableCell>
                 <TableCell>{project.name}</TableCell>
-                <TableCell>{project.description}</TableCell>
-                <TableCell>{new Date(project.startDate).toLocaleDateString()}</TableCell>
+                <TableCell>{project.status}</TableCell>
+                <TableCell>{project.customerName}</TableCell>
+                <TableCell>{project.service}</TableCell>
+                <TableCell>{project.manager}</TableCell>
+                <TableCell>{project.startDate ? new Date(project.endDate).toLocaleDateString() : '-'}</TableCell>
                 <TableCell>{project.endDate ? new Date(project.endDate).toLocaleDateString() : '-'}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => handleOpen(project)} color="primary">
