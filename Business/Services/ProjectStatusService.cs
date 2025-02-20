@@ -8,7 +8,7 @@ using Data.Repositories;
 
 namespace Business.Services;
 
-public class ProjectStatusService(IProjectStatusRepository projectStatusRepository)
+public class ProjectStatusService(IProjectStatusRepository projectStatusRepository) : IProjectStatusService
 {
     private readonly IProjectStatusRepository _projectStatusRepository = projectStatusRepository;
 

@@ -29,7 +29,7 @@ public class CustomerPhoneNumberService(ICustomerPhoneNumberRepository customerP
         await _customerPhoneNumberRepository.CreateAsync(entity);
         var result = await _customerPhoneNumberRepository.SaveAsync() > 0;
         if (!result)
-            return ServiceResult.InternalServerError("Failed creating customer phone number".);
+            return ServiceResult.InternalServerError("Failed creating customer phone number.");
 
         var phoneNumber = CustomerPhoneNumberFactory.Create(entity);
         return ServiceResult<CustomerPhoneNumberModel>.Ok(phoneNumber);
