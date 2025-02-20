@@ -26,6 +26,8 @@ internal class Program
         builder.Services.AddScoped<IUserRoleService, UserRoleService>();
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<IServiceUnitRepository, ServiceUnitRepository>();
+        builder.Services.AddScoped<IServiceUnitService, ServiceUnitService>();
 
         var app = builder.Build();
 
