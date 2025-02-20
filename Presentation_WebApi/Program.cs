@@ -32,6 +32,8 @@ internal class Program
         builder.Services.AddScoped<IServiceService, ServiceService>();
         builder.Services.AddScoped<IProjectStatusRepository, ProjectStatusRepository>();
         builder.Services.AddScoped<IProjectStatusService, ProjectStatusService>();
+        builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+        builder.Services.AddScoped<IProjectService, ProjectService>();
 
         var app = builder.Build();
 
