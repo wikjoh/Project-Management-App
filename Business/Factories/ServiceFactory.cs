@@ -33,6 +33,7 @@ public static class ServiceFactory
             Name = entity.Name,
             Price = entity.Price,
             UnitId = entity.UnitId,
+            Unit = entity.Unit.Unit
         };
     }
 }

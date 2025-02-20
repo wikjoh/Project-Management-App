@@ -4,6 +4,7 @@ using Business.Interfaces;
 using Business.Models;
 using Business.Models.ServiceResult;
 using Data.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Business.Services;
 
@@ -29,24 +30,24 @@ public class ServiceService(IServiceRepository serviceRepository) : IServiceServ
         if (!result)
             return ServiceResult.InternalServerError("Failed creating service.");
 
-        var service = ServiceFactory.Create(serviceEntity);
-        return ServiceResult<ServiceModel>.Ok(service);
+        var serviceEntityWithUnit = await _serviceRepository.GetOneAsync(x => x.Id == serviceEntity.Id, q => q.Include(s => s.Unit));
+        return ServiceResult<ServiceModel>.Ok(ServiceFactory.Create(serviceEntityWithUnit!));
     }
 
 
     // READ
-    public async Task<IServiceResult> GetAllServicesAsync()
+    public async Task<IServiceResult> GetAllServicesWithUnitAsync()
     {
-        var serviceEntities = await _serviceRepository.GetAllAsync();
+        var serviceEntities = await _serviceRepository.GetAllAsync(q => q.Include(s => s.Unit));
         var serviceList = serviceEntities != null ? serviceEntities.Select(x => ServiceFactory.Create(x)) : [];
 
         return ServiceResult<IEnumerable<ServiceModel>>.Ok(serviceList);
     }
 
 
-    public async Task<IServiceResult> GetServiceByIdAsync(int id)
+    public async Task<IServiceResult> GetServiceByIdWithUnitAsync(int id)
     {
-        var serviceEntity = await _serviceRepository.GetOneAsync(x => x.Id == id);
+        var serviceEntity = await _serviceRepository.GetOneAsync(x => x.Id == id, q => q.Include(s => s.Unit));
 
         if (serviceEntity == null)
             return ServiceResult.NotFound($"Service with id {id} does not exist.");
@@ -75,7 +76,7 @@ public class ServiceService(IServiceRepository serviceRepository) : IServiceServ
         if (!result)
             return ServiceResult.InternalServerError("Failed updating service.");
 
-        var updatedEntity = await _serviceRepository.GetOneAsync(x => x.Id == form.Id);
+        var updatedEntity = await _serviceRepository.GetOneAsync(x => x.Id == form.Id, q => q.Include(s => s.Unit));
         return ServiceResult<ServiceModel>.Ok(ServiceFactory.Create(updatedEntity!));
     }
 

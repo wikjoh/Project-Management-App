@@ -9,4 +9,6 @@ public class ServiceModel
     public decimal Price { get; set; }
 
     public int UnitId { get; set; }
+
+    public string? Unit { get; init; } = null;
 }
