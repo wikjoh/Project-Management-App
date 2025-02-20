@@ -22,12 +22,14 @@ public class CustomerPhoneNumberService(ICustomerPhoneNumberRepository customerP
         if (phoneNumberExists == true)
             return ServiceResult.AlreadyExists($"Phone number {form.PhoneNumber} already exists on customer {form.CustomerId}.");
         if (phoneNumberExists == null)
-            return ServiceResult.InternalServerError("Failed verifyingg if phone number exists");
+            return ServiceResult.InternalServerError("Failed verifying if phone number exists");
 
         var entity = CustomerPhoneNumberFactory.Create(form);
 
         await _customerPhoneNumberRepository.CreateAsync(entity);
-        await _customerPhoneNumberRepository.SaveAsync();
+        var result = await _customerPhoneNumberRepository.SaveAsync() > 0;
+        if (!result)
+            return ServiceResult.InternalServerError("Failed creating customer phone number".);
 
         var phoneNumber = CustomerPhoneNumberFactory.Create(entity);
         return ServiceResult<CustomerPhoneNumberModel>.Ok(phoneNumber);
