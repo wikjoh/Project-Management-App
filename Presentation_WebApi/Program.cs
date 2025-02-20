@@ -35,10 +35,22 @@ internal class Program
         builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
         builder.Services.AddScoped<IProjectService, ProjectService>();
 
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowReactApp",
+                policy =>
+                {
+                    policy.WithOrigins("http://localhost:5174")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+        });
+
         var app = builder.Build();
 
         app.MapOpenApi();
         app.UseHttpsRedirection();
+        app.UseCors("AllowReactApp");
         app.UseAuthentication();
         app.MapControllers();
         app.Run();
