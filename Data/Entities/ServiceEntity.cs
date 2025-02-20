@@ -1,8 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Net.Mail;
 
 namespace Data.Entities;
 
+[Index(nameof(Name), IsUnique = true)]
 public class ServiceEntity
 {
     [Key]
