@@ -30,10 +30,10 @@ const Users = () => {
   const [open, setOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
+    id: '',
     firstName: '',
     lastName: '',
+    email: '',
     roleId: '',
   });
 
@@ -64,19 +64,19 @@ const Users = () => {
     if (user) {
       setEditingUser(user);
       setFormData({
-        username: user.username,
-        email: user.email,
+        id: user.id,
         firstName: user.firstName,
         lastName: user.lastName,
+        email: user.emailAddress,
         roleId: user.roleId,
       });
     } else {
       setEditingUser(null);
       setFormData({
-        username: '',
-        email: '',
+        id: '',
         firstName: '',
         lastName: '',
+        email: '',
         roleId: '',
       });
     }
@@ -116,6 +116,7 @@ const Users = () => {
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell>Id</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Email</TableCell>
               <TableCell>Role</TableCell>
@@ -125,6 +126,7 @@ const Users = () => {
           <TableBody>
             {users.map((user) => (
               <TableRow key={user.id}>
+                <TableCell>{user.id}</TableCell>
                 <TableCell>{user.displayName}</TableCell>
                 <TableCell>{user.emailAddress}</TableCell>
 

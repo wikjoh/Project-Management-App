@@ -9,10 +9,10 @@ const api = axios.create({
 
 // Projects
 export const getProjects = () => api.get('/projects/detailed');
-export const getProject = (id) => api.get(`/projects/${id}`);
+export const getProject = (id) => api.get(`/projects/id/${id}`);
 export const createProject = (data) => api.post('/projects', data);
 export const updateProject = (data) => api.put(`/projects`, data);
-export const deleteProject = (data) => api.delete(`/projects`, data);
+export const deleteProject = (id) => api.delete(`/projects/id/${id}`);
 
 // Customers
 export const getCustomers = () => api.get('/customers/detailed');

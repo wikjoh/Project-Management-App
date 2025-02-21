@@ -26,12 +26,17 @@ const Projects = () => {
   const [open, setOpen] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
   const [formData, setFormData] = useState({
+    id: '',
     name: '',
-    description: '',
-    startDate: '',
-    endDate: '',
+    startDate: null,
+    endDate: null,
+    projectManagerId: '',
+    customerName: '',
     customerId: '',
-    projectStatusId: '',
+    serviceId: '',
+    serviceQuantity: null,
+    statusId: '',
+    totalPrice: null,
   });
 
   useEffect(() => {
@@ -51,22 +56,31 @@ const Projects = () => {
     if (project) {
       setEditingProject(project);
       setFormData({
+        id: project.id,
         name: project.name,
-        description: project.description,
-        startDate: project.startDate?.split('T')[0] || '',
-        endDate: project.endDate?.split('T')[0] || '',
+        startDate: project.startDate,
+        endDate: project.endDate,
+        projectManagerId: project.projectManagerId,
+        customerName: project.customerName,
         customerId: project.customerId,
-        projectStatusId: project.projectStatusId,
+        serviceId: project.serviceId,
+        serviceQuantity: project.ServiceQuantity,
+        statusId: project.statusId,
+        totalPrice: project.totalPrice,
       });
     } else {
       setEditingProject(null);
       setFormData({
         name: '',
-        description: '',
-        startDate: '',
-        endDate: '',
+        startDate: null,
+        endDate: null,
+        projectManagerIdId: '',
+        customerName: '',
         customerId: '',
-        projectStatusId: '',
+        serviceId: '',
+        serviceQuantity: null,
+        statusId: '',
+        totalPrice: null,
       });
     }
     setOpen(true);
@@ -81,7 +95,7 @@ const Projects = () => {
     e.preventDefault();
     try {
       if (editingProject) {
-        await updateProject(editingProject.id, formData);
+        await updateProject(formData);
       } else {
         await createProject(formData);
       }
@@ -124,6 +138,7 @@ const Projects = () => {
               <TableCell>Manager</TableCell>
               <TableCell>Start Date</TableCell>
               <TableCell>End Date</TableCell>
+              <TableCell>Customer Note</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -133,11 +148,12 @@ const Projects = () => {
                 <TableCell>{project.id}</TableCell>
                 <TableCell>{project.name}</TableCell>
                 <TableCell>{project.status.name}</TableCell>
-                <TableCell>{project.customerName}</TableCell>
+                <TableCell>{project.customer.displayName}</TableCell>
                 <TableCell>{project.service.name}</TableCell>
                 <TableCell>{project.projectManager.displayName}</TableCell>
                 <TableCell>{project.startDate ? new Date(project.endDate).toLocaleDateString() : '-'}</TableCell>
                 <TableCell>{project.endDate ? new Date(project.endDate).toLocaleDateString() : '-'}</TableCell>
+                <TableCell>{project.customerName}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => handleOpen(project)} color="primary">
                     <EditIcon />
@@ -166,12 +182,12 @@ const Projects = () => {
             />
             <TextField
               fullWidth
-              label="Description"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              label="Project Status ID"
+              type="number"
+              value={formData.statusId}
+              onChange={(e) => setFormData({ ...formData, statusId: e.target.value })}
               margin="normal"
-              multiline
-              rows={3}
+              required
             />
             <TextField
               fullWidth
@@ -181,7 +197,6 @@ const Projects = () => {
               onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
               margin="normal"
               InputLabelProps={{ shrink: true }}
-              required
             />
             <TextField
               fullWidth
@@ -194,6 +209,14 @@ const Projects = () => {
             />
             <TextField
               fullWidth
+              label="Customer Name"
+              value={formData.customerName}
+              onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
+              margin="normal"
+              required
+            />
+            <TextField
+              fullWidth
               label="Customer ID"
               type="number"
               value={formData.customerId}
@@ -203,13 +226,39 @@ const Projects = () => {
             />
             <TextField
               fullWidth
-              label="Project Status ID"
+              label="Project Manager Id"
               type="number"
-              value={formData.projectStatusId}
-              onChange={(e) => setFormData({ ...formData, projectStatusId: e.target.value })}
+              value={formData.projectManagerId}
+              onChange={(e) => setFormData({ ...formData, projectManagerId: e.target.value })}
               margin="normal"
               required
             />
+            <TextField
+              fullWidth
+              label="Service Id"
+              type="number"
+              value={formData.serviceId}
+              onChange={(e) => setFormData({ ...formData, serviceId: e.target.value })}
+              margin="normal"
+              required
+            />
+            <TextField
+              fullWidth
+              label="Service Quantity"
+              type="number"
+              value={formData.serviceQuantity}
+              onChange={(e) => setFormData({ ...formData, serviceQuantity: e.target.value })}
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              label="Total price"
+              type="number"
+              value={formData.totalPrice}
+              onChange={(e) => setFormData({ ...formData, totalPrice: e.target.value })}
+              margin="normal"
+            />
+            
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>

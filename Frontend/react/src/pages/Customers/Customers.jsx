@@ -25,10 +25,9 @@ const Customers = () => {
   const [open, setOpen] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState(null);
   const [formData, setFormData] = useState({
+    id: '',
     name: '',
     email: '',
-    phoneNumber: '',
-    address: '',
   });
 
   useEffect(() => {
@@ -48,18 +47,16 @@ const Customers = () => {
     if (customer) {
       setEditingCustomer(customer);
       setFormData({
+        id: customer.id,
         name: customer.name,
         email: customer.email,
-        phoneNumber: customer.phoneNumber,
-        address: customer.address,
       });
     } else {
       setEditingCustomer(null);
       setFormData({
+        id: '',
         name: '',
         email: '',
-        phoneNumber: '',
-        address: '',
       });
     }
     setOpen(true);
@@ -98,6 +95,7 @@ const Customers = () => {
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell>Id</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Email</TableCell>
               <TableCell>Actions</TableCell>
@@ -106,6 +104,7 @@ const Customers = () => {
           <TableBody>
             {customers.map((customer) => (
               <TableRow key={customer.id}>
+                <TableCell>{customer.id}</TableCell>
                 <TableCell>{customer.displayName}</TableCell>
                 <TableCell>{customer.emailAddress}</TableCell>
                 <TableCell>
