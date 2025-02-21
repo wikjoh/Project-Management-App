@@ -116,10 +116,8 @@ const Users = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Username</TableCell>
+              <TableCell>Name</TableCell>
               <TableCell>Email</TableCell>
-              <TableCell>First Name</TableCell>
-              <TableCell>Last Name</TableCell>
               <TableCell>Role</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
@@ -127,10 +125,9 @@ const Users = () => {
           <TableBody>
             {users.map((user) => (
               <TableRow key={user.id}>
-                <TableCell>{user.username}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{user.firstName}</TableCell>
-                <TableCell>{user.lastName}</TableCell>
+                <TableCell>{user.displayName}</TableCell>
+                <TableCell>{user.emailAddress}</TableCell>
+
                 <TableCell>
                   {roles.find(role => role.id === user.roleId)?.name || 'Unknown'}
                 </TableCell>

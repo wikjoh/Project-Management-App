@@ -8,14 +8,14 @@ const api = axios.create({
 });
 
 // Projects
-export const getProjects = () => api.get('/projects');
+export const getProjects = () => api.get('/projects/detailed');
 export const getProject = (id) => api.get(`/projects/${id}`);
 export const createProject = (data) => api.post('/projects', data);
 export const updateProject = (data) => api.put(`/projects`, data);
 export const deleteProject = (data) => api.delete(`/projects`, data);
 
 // Customers
-export const getCustomers = () => api.get('/customers');
+export const getCustomers = () => api.get('/customers/detailed');
 export const getCustomer = (id) => api.get(`/customers/${id}`);
 export const createCustomer = (data) => api.post('/customers', data);
 export const updateCustomer = (data) => api.put(`/customers`, data);
@@ -27,6 +27,13 @@ export const getUser = (id) => api.get(`/users/${id}`);
 export const createUser = (data) => api.post('/users', data);
 export const updateUser = (data) => api.put(`/users`, data);
 export const deleteUser = (data) => api.delete(`/users`, data);
+
+// Services
+export const getServices = () => api.get('/services');
+export const getService = (id) => api.get(`/services/${id}`);
+export const createService = (data) => api.post('/services', data);
+export const updateService = (data) => api.put(`/services`, data);
+export const deleteService = (data) => api.delete(`/services`, data);
 
 // Project Statuses
 export const getProjectStatuses = () => api.get('/project-statuses');

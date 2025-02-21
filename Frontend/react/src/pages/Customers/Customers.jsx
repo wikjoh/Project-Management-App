@@ -100,18 +100,14 @@ const Customers = () => {
             <TableRow>
               <TableCell>Name</TableCell>
               <TableCell>Email</TableCell>
-              <TableCell>Phone Number</TableCell>
-              <TableCell>Address</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {customers.map((customer) => (
               <TableRow key={customer.id}>
-                <TableCell>{customer.name}</TableCell>
-                <TableCell>{customer.email}</TableCell>
-                <TableCell>{customer.phoneNumber}</TableCell>
-                <TableCell>{customer.address}</TableCell>
+                <TableCell>{customer.displayName}</TableCell>
+                <TableCell>{customer.emailAddress}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => handleOpen(customer)} color="primary">
                     <EditIcon />

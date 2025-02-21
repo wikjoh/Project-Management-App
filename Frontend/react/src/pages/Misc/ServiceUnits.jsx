@@ -95,18 +95,16 @@ const ServiceUnits = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell>Rate</TableCell>
+              <TableCell>Id</TableCell>
+              <TableCell>Unit</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {serviceUnits.map((unit) => (
               <TableRow key={unit.id}>
-                <TableCell>{unit.name}</TableCell>
-                <TableCell>{unit.description}</TableCell>
-                <TableCell>${unit.rate}</TableCell>
+                <TableCell>{unit.id}</TableCell>
+                <TableCell>{unit.unit}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => handleOpen(unit)} color="primary">
                     <EditIcon />

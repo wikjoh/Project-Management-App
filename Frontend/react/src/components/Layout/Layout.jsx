@@ -36,7 +36,8 @@ const Layout = ({ children }) => {
     if (path.startsWith('/projects')) return 0;
     if (path.startsWith('/customers')) return 1;
     if (path.startsWith('/users')) return 2;
-    if (path.startsWith('/misc')) return 3;
+    if (path.startsWith('/services')) return 3;
+    if (path.startsWith('/misc')) return 4;
     return 0;
   };
 
@@ -55,6 +56,7 @@ const Layout = ({ children }) => {
             <Tab label="Projects" onClick={() => navigate('/projects')} />
             <Tab label="Customers" onClick={() => navigate('/customers')} />
             <Tab label="Users" onClick={() => navigate('/users')} />
+            <Tab label="Services" onClick={() => navigate('/services')} />
             <Tab 
               label="Miscellaneous" 
               icon={<ExpandMoreIcon />} 

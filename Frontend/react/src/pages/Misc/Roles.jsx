@@ -92,16 +92,16 @@ const Roles = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Description</TableCell>
+              <TableCell>Id</TableCell>
+              <TableCell>Role</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {roles.map((role) => (
               <TableRow key={role.id}>
-                <TableCell>{role.name}</TableCell>
-                <TableCell>{role.description}</TableCell>
+                <TableCell>{role.id}</TableCell>
+                <TableCell>{role.role}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => handleOpen(role)} color="primary">
                     <EditIcon />

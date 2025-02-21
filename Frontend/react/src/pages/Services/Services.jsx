@@ -18,42 +18,48 @@ import {
   Typography,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { getProjectStatuses, createProjectStatus, updateProjectStatus } from '../../services/api';
+import { getServices, createService, updateService } from '../../services/api';
 
-const ProjectStatuses = () => {
-  const [statuses, setStatuses] = useState([]);
+const Services = () => {
+  const [services, setServices] = useState([]);
   const [open, setOpen] = useState(false);
-  const [editingStatus, setEditingStatus] = useState(null);
+  const [editingService, setEditingService] = useState(null);
   const [formData, setFormData] = useState({
+    id: '',
     name: '',
-    description: '',
+    price: '',
+    unitId: '',
   });
 
   useEffect(() => {
-    fetchStatuses();
+    fetchServices();
   }, []);
 
-  const fetchStatuses = async () => {
+  const fetchServices = async () => {
     try {
-      const response = await getProjectStatuses();
-      setStatuses(response.data);
+      const response = await getServices();
+      setServices(response.data);
     } catch (error) {
-      console.error('Error fetching project statuses:', error);
+      console.error('Error fetching services:', error);
     }
   };
 
-  const handleOpen = (status = null) => {
-    if (status) {
-      setEditingStatus(status);
+  const handleOpen = (service = null) => {
+    if (service) {
+      setEditingService(service);
       setFormData({
-        name: status.name,
-        description: status.description,
+        id: service.id,
+        name: service.name,
+        price: service.price,
+        unitId: service.unitId,
       });
     } else {
-      setEditingStatus(null);
+      setEditingService(null);
       setFormData({
+        id: service.id,
         name: '',
-        description: '',
+        price: '',
+        unitId: '',
       });
     }
     setOpen(true);
@@ -61,30 +67,30 @@ const ProjectStatuses = () => {
 
   const handleClose = () => {
     setOpen(false);
-    setEditingStatus(null);
+    setEditingService(null);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (editingStatus) {
-        await updateProjectStatus(editingStatus.id, formData);
+      if (editingService) {
+        await updateService(formData);
       } else {
-        await createProjectStatus(formData);
+        await createService(formData);
       }
       handleClose();
-      fetchStatuses();
+      fetchServices();
     } catch (error) {
-      console.error('Error saving project status:', error);
+      console.error('Error saving service:', error);
     }
   };
 
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-        <Typography variant="h5">Project Statuses</Typography>
+        <Typography variant="h5">Services</Typography>
         <Button variant="contained" color="primary" onClick={() => handleOpen()}>
-          Create New Status
+          Create New Service
         </Button>
       </Box>
 
@@ -94,16 +100,20 @@ const ProjectStatuses = () => {
             <TableRow>
               <TableCell>Id</TableCell>
               <TableCell>Name</TableCell>
+              <TableCell>Price</TableCell>
+              <TableCell>Unit</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {statuses.map((status) => (
-              <TableRow key={status.id}>
-                <TableCell>{status.id}</TableCell>
-                <TableCell>{status.name}</TableCell>
+            {services.map((service) => (
+              <TableRow key={service.id}>
+                <TableCell>{service.id}</TableCell>
+                <TableCell>{service.name}</TableCell>
+                <TableCell>{service.price}</TableCell>
+                <TableCell>{service.unit}</TableCell>
                 <TableCell>
-                  <IconButton onClick={() => handleOpen(status)} color="primary">
+                  <IconButton onClick={() => handleOpen(service)} color="primary">
                     <EditIcon />
                   </IconButton>
                 </TableCell>
@@ -114,7 +124,7 @@ const ProjectStatuses = () => {
       </TableContainer>
 
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle>{editingStatus ? 'Edit Status' : 'Create New Status'}</DialogTitle>
+        <DialogTitle>{editingService ? 'Edit Service' : 'Create New Service'}</DialogTitle>
         <form onSubmit={handleSubmit}>
           <DialogContent>
             <TextField
@@ -127,18 +137,25 @@ const ProjectStatuses = () => {
             />
             <TextField
               fullWidth
-              label="Description"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              label="Price"
+              value={formData.price}
+              onChange={(e) => setFormData({ ...formData, price: e.target.value })}
               margin="normal"
-              multiline
-              rows={3}
+              required
+            />
+            <TextField
+              fullWidth
+              label="UnitId"
+              value={formData.unitId}
+              onChange={(e) => setFormData({ ...formData, unitId: e.target.value })}
+              margin="normal"
+              required
             />
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
             <Button type="submit" variant="contained" color="primary">
-              {editingStatus ? 'Save' : 'Create'}
+              {editingService ? 'Save' : 'Create'}
             </Button>
           </DialogActions>
         </form>
@@ -147,4 +164,4 @@ const ProjectStatuses = () => {
   );
 };
 
-export default ProjectStatuses; 
+export default Services; 

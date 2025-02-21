@@ -132,10 +132,10 @@ const Projects = () => {
               <TableRow key={project.id}>
                 <TableCell>{project.id}</TableCell>
                 <TableCell>{project.name}</TableCell>
-                <TableCell>{project.status}</TableCell>
+                <TableCell>{project.status.name}</TableCell>
                 <TableCell>{project.customerName}</TableCell>
-                <TableCell>{project.service}</TableCell>
-                <TableCell>{project.manager}</TableCell>
+                <TableCell>{project.service.name}</TableCell>
+                <TableCell>{project.projectManager.displayName}</TableCell>
                 <TableCell>{project.startDate ? new Date(project.endDate).toLocaleDateString() : '-'}</TableCell>
                 <TableCell>{project.endDate ? new Date(project.endDate).toLocaleDateString() : '-'}</TableCell>
                 <TableCell>

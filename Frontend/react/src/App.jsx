@@ -10,6 +10,7 @@ import Layout from './components/Layout/Layout'
 import Projects from './pages/Projects/Projects'
 import Customers from './pages/Customers/Customers'
 import Users from './pages/Users/Users'
+import Services from './pages/Services/Services'
 import ProjectStatuses from './pages/Misc/ProjectStatuses'
 import Roles from './pages/Misc/Roles'
 import ServiceUnits from './pages/Misc/ServiceUnits'
@@ -37,6 +38,7 @@ function App() {
             <Route path="/projects" element={<Projects />} />
             <Route path="/customers" element={<Customers />} />
             <Route path="/users" element={<Users />} />
+            <Route path="/services" element={<Services />} />
             <Route path="/misc/project-statuses" element={<ProjectStatuses />} />
             <Route path="/misc/roles" element={<Roles />} />
             <Route path="/misc/service-units" element={<ServiceUnits />} />
