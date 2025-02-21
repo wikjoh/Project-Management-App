@@ -59,18 +59,27 @@ public class UserService(IUserRepository userRepository, IUserRoleService userRo
 
 
     // READ
-    public async Task<IServiceResult> GetAllWithRolesAsync()
+    public async Task<IServiceResult> GetAll()
     {
-        var users = await _userRepository.GetAllAsync(q => q.Include(u => u.UserRoles).ThenInclude(ur => ur.Role));
+        var users = await _userRepository.GetAllAsync();
+        users ??= [];
+
+        var usersListWithRoles = users.Select(x => UserFactory.ToModel(x));
+        return ServiceResult<IEnumerable<UserModel>>.Ok(usersListWithRoles);
+    }
+
+    public async Task<IServiceResult> GetAllDetailedAsync()
+    {
+        var users = await _userRepository.GetAllAsync(q => q.Include(u => u.UserRoles).ThenInclude(ur => ur.Role).Include(u => u.Projects));
         users ??= [];
 
         var usersListWithRoles = users.Select(x => UserFactory.ToModelDetailed(x));
         return ServiceResult<IEnumerable<UserModelDetailed>>.Ok(usersListWithRoles);
     }
 
-    public async Task<IServiceResult> GetByIdWithRolesAsync(int id)
+    public async Task<IServiceResult> GetByIdDetailedAsync(int id)
     {
-        var userEntity = await _userRepository.GetOneAsync(x => x.Id == id, q => q.Include(u => u.UserRoles).ThenInclude(ur => ur.Role));
+        var userEntity = await _userRepository.GetOneAsync(x => x.Id == id, q => q.Include(u => u.UserRoles).ThenInclude(ur => ur.Role).Include(u => u.Projects));
 
         if (userEntity == null)
             return ServiceResult.NotFound($"User with id {id} not found.");
@@ -79,9 +88,9 @@ public class UserService(IUserRepository userRepository, IUserRoleService userRo
         return ServiceResult<UserModelDetailed>.Ok(userWithRoles);
     }
 
-    public async Task<IServiceResult> GetByEmailWithRolesAsync(string email)
+    public async Task<IServiceResult> GetByEmailDetailedAsync(string email)
     {
-        var userEntity = await _userRepository.GetOneAsync(x => x.EmailAddress == email, q => q.Include(u => u.UserRoles).ThenInclude(ur => ur.Role));
+        var userEntity = await _userRepository.GetOneAsync(x => x.EmailAddress == email, q => q.Include(u => u.UserRoles).ThenInclude(ur => ur.Role).Include(u => u.Projects));
 
         if (userEntity == null)
             return ServiceResult.NotFound($"User with email {email} not found.");

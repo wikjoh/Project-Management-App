@@ -4,6 +4,7 @@ using Business.Interfaces;
 using Business.Models;
 using Business.Models.ServiceResult;
 using Data.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Business.Services;
 
@@ -39,6 +40,19 @@ public class ProjectService(IProjectRepository projectRepository) : IProjectServ
         return ServiceResult<IEnumerable<ProjectModel>>.Ok(projectList);
     }
 
+    public async Task<IServiceResult> GetAllProjectsDetailed()
+    {
+        var projectEntities = await _projectRepository.GetAllAsync(q => q
+                                                            .Include(p => p.Customer)
+                                                            .Include(p => p.ProjectManager)
+                                                            .Include(p => p.Service)
+                                                            .Include(p => p.Status));
+
+        var projectList = projectEntities != null ? projectEntities.Select(x => ProjectFactory.ToModelDetailed(x)) : [];
+
+        return ServiceResult<IEnumerable<ProjectModelDetailed>>.Ok(projectList);
+    }
+
     public async Task<IServiceResult> GetProjectById(int id)
     {
         var projectEntity = await _projectRepository.GetOneAsync(x => x.Id == id);
@@ -47,6 +61,21 @@ public class ProjectService(IProjectRepository projectRepository) : IProjectServ
 
         var project = ProjectFactory.ToModel(projectEntity);
         return ServiceResult<ProjectModel>.Ok(project);
+    }
+
+    public async Task<IServiceResult> GetProjectByIdDetailed(int id)
+    {
+        var projectEntity = await _projectRepository.GetOneAsync(x => x.Id == id, q => q
+                                                            .Include(p => p.Customer)
+                                                            .Include(p => p.ProjectManager)
+                                                            .Include(p => p.Service)
+                                                            .Include(p => p.Status));
+
+        if (projectEntity == null)
+            return ServiceResult.NotFound($"Project with id {id} not found.");
+
+        var project = ProjectFactory.ToModelDetailed(projectEntity);
+        return ServiceResult<ProjectModelDetailed>.Ok(project);
     }
 
 

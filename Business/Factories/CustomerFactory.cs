@@ -48,7 +48,7 @@ public static class CustomerFactory
             LastName = entity.LastName,
             CompanyName = entity.CompanyName,
             EmailAddress = entity.EmailAddress,
-            PhoneNumbers = entity.PhoneNumbers?.Select(pn => CustomerPhoneNumberFactory.Create(pn)).ToList() ?? []
+            PhoneNumbers = entity.PhoneNumbers?.Select(pn => CustomerPhoneNumberFactory.ToModel(pn)).ToList() ?? []
         };
     }
 }

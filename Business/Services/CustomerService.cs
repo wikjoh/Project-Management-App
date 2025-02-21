@@ -54,18 +54,38 @@ public class CustomerService(ICustomerRepository customerRepository, ICustomerPh
 
 
     // READ
-    public async Task<IServiceResult> GetAllWithPhoneAsync()
+    public async Task<IServiceResult> GetAllAsync()
     {
-        var customers = await _customerRepository.GetAllAsync(q => q.Include(c => c.PhoneNumbers));
+        var customers = await _customerRepository.GetAllAsync();
+        customers ??= [];
+
+        var customerListWithPhone = ServiceResult<IEnumerable<CustomerModel>?>.Ok(customers.Select(x => CustomerFactory.ToModel(x)));
+        return customerListWithPhone;
+    }
+
+    public async Task<IServiceResult> GetAllDetailedAsync()
+    {
+        var customers = await _customerRepository.GetAllAsync(q => q.Include(c => c.PhoneNumbers).Include(c => c.Projects));
         customers ??= [];
 
         var customerListWithPhone = ServiceResult<IEnumerable<CustomerModelDetailed>?>.Ok(customers.Select(x => CustomerFactory.ToModelDetailed(x)));
         return customerListWithPhone;
     }
 
-    public async Task<IServiceResult> GetByIdWithPhoneAsync(int id)
+    public async Task<IServiceResult> GetByIdAsync(int id)
     {
-        var customerEntity = await _customerRepository.GetOneAsync(x => x.Id == id, q => q.Include(c => c.PhoneNumbers));
+        var customerEntity = await _customerRepository.GetOneAsync(x => x.Id == id);
+
+        if (customerEntity == null)
+            return ServiceResult.NotFound($"Customer with id {id} not found.");
+
+        var customerWithPhone = CustomerFactory.ToModel(customerEntity);
+        return ServiceResult<CustomerModel>.Ok(customerWithPhone);
+    }
+
+    public async Task<IServiceResult> GetByIdDetailedAsync(int id)
+    {
+        var customerEntity = await _customerRepository.GetOneAsync(x => x.Id == id, q => q.Include(c => c.PhoneNumbers).Include(c => c.Projects));
 
         if (customerEntity == null)
             return ServiceResult.NotFound($"Customer with id {id} not found.");
@@ -74,9 +94,20 @@ public class CustomerService(ICustomerRepository customerRepository, ICustomerPh
         return ServiceResult<CustomerModelDetailed>.Ok(customerWithPhone);
     }
 
-    public async Task<IServiceResult> GetByEmailWithPhoneAsync(string emailAddress)
+    public async Task<IServiceResult> GetByEmailAsync(string emailAddress)
     {
-        var customerEntity = await _customerRepository.GetOneAsync(x => x.EmailAddress == emailAddress, q => q.Include(c => c.PhoneNumbers));
+        var customerEntity = await _customerRepository.GetOneAsync(x => x.EmailAddress == emailAddress);
+
+        if (customerEntity == null)
+            return ServiceResult.NotFound($"Customer with email address {emailAddress} not found.");
+
+        var customerWithPhone = CustomerFactory.ToModel(customerEntity);
+        return ServiceResult<CustomerModel>.Ok(customerWithPhone);
+    }
+
+    public async Task<IServiceResult> GetByEmailDetailedAsync(string emailAddress)
+    {
+        var customerEntity = await _customerRepository.GetOneAsync(x => x.EmailAddress == emailAddress, q => q.Include(c => c.PhoneNumbers).Include(c => c.Projects));
 
         if (customerEntity == null)
             return ServiceResult.NotFound($"Customer with email address {emailAddress} not found.");

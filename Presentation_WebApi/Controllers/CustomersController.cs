@@ -22,33 +22,66 @@ public class CustomersController(ICustomerService customerService) : ControllerB
             : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
-    // Get all customers including phone numbers
+    // Get all customers 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var result = await _customerService.GetAllWithPhoneAsync();
+        var result = await _customerService.GetAllAsync();
+
+        return result.Success
+            ? Ok(((ServiceResult<IEnumerable<CustomerModel>>)result).Data)
+            : StatusCode(result.StatusCode, result.ErrorMessage);
+    }
+
+    // Get all customers detailed
+    [HttpGet("detailed")]
+    public async Task<IActionResult> GetAllDetailed()
+    {
+        var result = await _customerService.GetAllDetailedAsync();
 
         return result.Success
             ? Ok(((ServiceResult<IEnumerable<CustomerModelDetailed>>)result).Data)
             : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
-    // Get customer by email including phone number
+    // Get customer by email
     [HttpGet("email/{email}")]
     public async Task<IActionResult> GetByEmail(string email)
     {
-        var result = await _customerService.GetByEmailWithPhoneAsync(email);
+        var result = await _customerService.GetByEmailAsync(email);
+
+        return result.Success
+            ? Ok(((ServiceResult<CustomerModel>)result).Data)
+            : StatusCode(result.StatusCode, result.ErrorMessage);
+    }
+
+    // Get customer detailed by email
+    [HttpGet("detailed/email/{email}")]
+    public async Task<IActionResult> GetByEmailDetailed(string email)
+    {
+        var result = await _customerService.GetByEmailDetailedAsync(email);
 
         return result.Success
             ? Ok(((ServiceResult<CustomerModelDetailed>)result).Data)
             : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
-    // Get customer by id including phone number
+    // Get customer by id
     [HttpGet("id/{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var result = await _customerService.GetByIdWithPhoneAsync(id);
+        var result = await _customerService.GetByIdAsync(id);
+
+        return result.Success
+            ? Ok(((ServiceResult<CustomerModel>)result).Data)
+            : StatusCode(result.StatusCode, result.ErrorMessage);
+    }
+
+    // Get customer detailed by id
+    [HttpGet("detailed/id/{id}")]
+    public async Task<IActionResult> GetByIdDetailed(int id)
+    {
+        var result = await _customerService.GetByIdDetailedAsync(id);
 
         return result.Success
             ? Ok(((ServiceResult<CustomerModelDetailed>)result).Data)

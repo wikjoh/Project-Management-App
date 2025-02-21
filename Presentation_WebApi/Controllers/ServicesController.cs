@@ -30,7 +30,7 @@ public class ServicesController(IServiceService serviceService) : ControllerBase
         var result = await _serviceService.GetAllServicesWithUnitAsync();
 
         return result.Success
-            ? Ok(((ServiceResult<IEnumerable<ServiceModel>>)result).Data)
+            ? Ok(((ServiceResult<IEnumerable<ServiceModelDetailed>>)result).Data)
             : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 

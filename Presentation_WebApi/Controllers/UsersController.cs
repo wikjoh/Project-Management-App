@@ -22,33 +22,33 @@ public class UsersController(IUserService userService) : ControllerBase
             : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
-    // Get all users including roles
+    // Get all users detailed
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAllDetailed()
     {
-        var result = await _userService.GetAllWithRolesAsync();
+        var result = await _userService.GetAllDetailedAsync();
 
         return result.Success
-            ? Ok(((ServiceResult<IEnumerable<UserModel>>)result).Data)
+            ? Ok(((ServiceResult<IEnumerable<UserModelDetailed>>)result).Data)
             : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
-    // Get user by id including roles
+    // Get user detailed by id
     [HttpGet("id/{id}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetByIdDetailed(int id)
     {
-        var result = await _userService.GetByIdWithRolesAsync(id);
+        var result = await _userService.GetByIdDetailedAsync(id);
 
         return result.Success
             ? Ok(((ServiceResult<UserModelDetailed>)result).Data)
             : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
-    // Get user by email including roles
+    // Get user detailed by email
     [HttpGet("email/{email}")]
-    public async Task<IActionResult> GetById(string email)
+    public async Task<IActionResult> GetByIdDetailed(string email)
     {
-        var result = await _userService.GetByEmailWithRolesAsync(email);
+        var result = await _userService.GetByEmailDetailedAsync(email);
 
         return result.Success
             ? Ok(((ServiceResult<UserModelDetailed>)result).Data)

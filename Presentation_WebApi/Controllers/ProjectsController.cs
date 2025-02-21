@@ -33,6 +33,17 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
             : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
+    // Get all projects detailed
+    [HttpGet("detailed")]
+    public async Task<IActionResult> GetProjectsDetailed()
+    {
+        var result = await _projectService.GetAllProjectsDetailed();
+
+        return result.Success
+            ? Ok(((ServiceResult<IEnumerable<ProjectModelDetailed>>)result).Data)
+            : StatusCode(result.StatusCode, result.ErrorMessage);
+    }
+
     // Get project by id
     [HttpGet("id/{id}")]
     public async Task<IActionResult> GetProjectById(int id)
@@ -41,6 +52,17 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
 
         return result.Success
             ? Ok(((ServiceResult<ProjectModel>)result).Data)
+            : StatusCode(result.StatusCode, result.ErrorMessage);
+    }
+
+    // Get project detailed by id
+    [HttpGet("detailed/id/{id}")]
+    public async Task<IActionResult> GetProjectDetailedById(int id)
+    {
+        var result = await _projectService.GetProjectByIdDetailed(id);
+
+        return result.Success
+            ? Ok(((ServiceResult<ProjectModelDetailed>)result).Data)
             : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 

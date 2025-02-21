@@ -44,7 +44,8 @@ public static class UserFactory
             LastName = entity.LastName,
             DisplayName = entity.DisplayName,
             EmailAddress = entity.EmailAddress,
-            Roles = entity.UserRoles?.Select(ur => RoleFactory.Create(ur.Role)).ToList() ?? []
+            Roles = entity.UserRoles?.Select(ur => RoleFactory.ToModel(ur.Role)).ToList() ?? [],
+            Projects = entity.Projects?.Select(p => ProjectFactory.ToModel(p)).ToList() ?? []
         };
     }
 }

@@ -65,7 +65,7 @@ public static class ProjectFactory
             TotalPrice = entity.TotalPrice,
             StatusId = entity.StatusId,
             Customer = CustomerFactory.ToModel(entity.Customer),
-            User = UserFactory.ToModel(entity.ProjectManager)
+            ProjectManager = UserFactory.ToModel(entity.ProjectManager)
         };
     }
 }

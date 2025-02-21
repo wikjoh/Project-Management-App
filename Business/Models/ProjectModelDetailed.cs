@@ -26,7 +26,7 @@ public class ProjectModelDetailed
 
 
     public CustomerModel? Customer { get; set; } = null;
-    public UserModel? User { get; set; } = null;
+    public UserModel? ProjectManager { get; set; } = null;
     public ServiceModelDetailed? Service { get; set; } = null;
     public ProjectStatusModel? Status { get; set; } = null;
 }
