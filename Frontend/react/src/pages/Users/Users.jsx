@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -9,33 +10,16 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
   IconButton,
   Typography,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { getUsers, createUser, updateUser, getRoles } from '../../services/api';
+import { getUsers, getRoles } from '../../services/api';
 
 const Users = () => {
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState([]);
-  const [open, setOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState(null);
-  const [formData, setFormData] = useState({
-    id: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    roleId: '',
-  });
 
   useEffect(() => {
     fetchUsers();
@@ -60,54 +44,15 @@ const Users = () => {
     }
   };
 
-  const handleOpen = (user = null) => {
-    if (user) {
-      setEditingUser(user);
-      setFormData({
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.emailAddress,
-        roleId: user.roleId,
-      });
-    } else {
-      setEditingUser(null);
-      setFormData({
-        id: '',
-        firstName: '',
-        lastName: '',
-        email: '',
-        roleId: '',
-      });
-    }
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    setEditingUser(null);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      if (editingUser) {
-        await updateUser(editingUser.id, formData);
-      } else {
-        await createUser(formData);
-      }
-      handleClose();
-      fetchUsers();
-    } catch (error) {
-      console.error('Error saving user:', error);
-    }
-  };
-
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
         <Typography variant="h5">Users</Typography>
-        <Button variant="contained" color="primary" onClick={() => handleOpen()}>
+        <Button 
+          variant="contained" 
+          color="primary" 
+          onClick={() => navigate('/users/new')}
+        >
           Create New User
         </Button>
       </Box>
@@ -129,12 +74,14 @@ const Users = () => {
                 <TableCell>{user.id}</TableCell>
                 <TableCell>{user.displayName}</TableCell>
                 <TableCell>{user.emailAddress}</TableCell>
-
                 <TableCell>
                   {roles.find(role => role.id === user.roleId)?.name || 'Unknown'}
                 </TableCell>
                 <TableCell>
-                  <IconButton onClick={() => handleOpen(user)} color="primary">
+                  <IconButton 
+                    onClick={() => navigate(`/users/${user.id}/edit`)} 
+                    color="primary"
+                  >
                     <EditIcon />
                   </IconButton>
                 </TableCell>
@@ -143,67 +90,6 @@ const Users = () => {
           </TableBody>
         </Table>
       </TableContainer>
-
-      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle>{editingUser ? 'Edit User' : 'Create New User'}</DialogTitle>
-        <form onSubmit={handleSubmit}>
-          <DialogContent>
-            <TextField
-              fullWidth
-              label="Username"
-              value={formData.username}
-              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-              margin="normal"
-              required
-            />
-            <TextField
-              fullWidth
-              label="Email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              margin="normal"
-              required
-            />
-            <TextField
-              fullWidth
-              label="First Name"
-              value={formData.firstName}
-              onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-              margin="normal"
-              required
-            />
-            <TextField
-              fullWidth
-              label="Last Name"
-              value={formData.lastName}
-              onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-              margin="normal"
-              required
-            />
-            <FormControl fullWidth margin="normal" required>
-              <InputLabel>Role</InputLabel>
-              <Select
-                value={formData.roleId}
-                label="Role"
-                onChange={(e) => setFormData({ ...formData, roleId: e.target.value })}
-              >
-                {roles.map((role) => (
-                  <MenuItem key={role.id} value={role.id}>
-                    {role.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-            <Button type="submit" variant="contained" color="primary">
-              {editingUser ? 'Save' : 'Create'}
-            </Button>
-          </DialogActions>
-        </form>
-      </Dialog>
     </Box>
   );
 };

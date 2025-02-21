@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -9,25 +10,15 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
   IconButton,
   Typography,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { getRoles, createRole, updateRole } from '../../services/api';
+import { getRoles } from '../../services/api';
 
 const Roles = () => {
+  const navigate = useNavigate();
   const [roles, setRoles] = useState([]);
-  const [open, setOpen] = useState(false);
-  const [editingRole, setEditingRole] = useState(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-  });
 
   useEffect(() => {
     fetchRoles();
@@ -42,48 +33,15 @@ const Roles = () => {
     }
   };
 
-  const handleOpen = (role = null) => {
-    if (role) {
-      setEditingRole(role);
-      setFormData({
-        name: role.name,
-        description: role.description,
-      });
-    } else {
-      setEditingRole(null);
-      setFormData({
-        name: '',
-        description: '',
-      });
-    }
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    setEditingRole(null);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      if (editingRole) {
-        await updateRole(editingRole.id, formData);
-      } else {
-        await createRole(formData);
-      }
-      handleClose();
-      fetchRoles();
-    } catch (error) {
-      console.error('Error saving role:', error);
-    }
-  };
-
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
         <Typography variant="h5">Roles</Typography>
-        <Button variant="contained" color="primary" onClick={() => handleOpen()}>
+        <Button 
+          variant="contained" 
+          color="primary" 
+          onClick={() => navigate('/misc/roles/new')}
+        >
           Create New Role
         </Button>
       </Box>
@@ -103,7 +61,10 @@ const Roles = () => {
                 <TableCell>{role.id}</TableCell>
                 <TableCell>{role.role}</TableCell>
                 <TableCell>
-                  <IconButton onClick={() => handleOpen(role)} color="primary">
+                  <IconButton 
+                    onClick={() => navigate(`/misc/roles/${role.id}/edit`)} 
+                    color="primary"
+                  >
                     <EditIcon />
                   </IconButton>
                 </TableCell>
@@ -112,37 +73,6 @@ const Roles = () => {
           </TableBody>
         </Table>
       </TableContainer>
-
-      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle>{editingRole ? 'Edit Role' : 'Create New Role'}</DialogTitle>
-        <form onSubmit={handleSubmit}>
-          <DialogContent>
-            <TextField
-              fullWidth
-              label="Name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              margin="normal"
-              required
-            />
-            <TextField
-              fullWidth
-              label="Description"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              margin="normal"
-              multiline
-              rows={3}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-            <Button type="submit" variant="contained" color="primary">
-              {editingRole ? 'Save' : 'Create'}
-            </Button>
-          </DialogActions>
-        </form>
-      </Dialog>
     </Box>
   );
 };

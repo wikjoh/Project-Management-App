@@ -44,11 +44,13 @@ export const deleteProjectStatus = (data) => api.delete(`/project-statuses`, dat
 
 // Roles
 export const getRoles = () => api.get('/roles');
+export const getRole = (id) => api.get(`/roles/id/${id}`);
 export const createRole = (data) => api.post('/roles', data);
 export const updateRole = (data) => api.put(`/roles`, data);
 
 // Service Units
 export const getServiceUnits = () => api.get('/service-units');
+export const getServiceUnit = (id) => api.get(`/service-units/id/${id}`);
 export const createServiceUnit = (data) => api.post('/service-units', data);
 export const updateServiceUnit = (data) => api.put(`/service-units`, data);
 export const deleteServiceUnit = (data) => api.delete(`/service-units`, data);
