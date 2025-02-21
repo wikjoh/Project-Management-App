@@ -34,6 +34,7 @@ public static class CustomerFactory
             FirstName = entity.FirstName,
             LastName = entity.LastName,
             CompanyName = entity.CompanyName,
+            DisplayName = entity.DisplayName,
             EmailAddress = entity.EmailAddress
         };
     }
@@ -47,8 +48,10 @@ public static class CustomerFactory
             FirstName = entity.FirstName,
             LastName = entity.LastName,
             CompanyName = entity.CompanyName,
+            DisplayName = entity.DisplayName,
             EmailAddress = entity.EmailAddress,
-            PhoneNumbers = entity.PhoneNumbers?.Select(pn => CustomerPhoneNumberFactory.ToModel(pn)).ToList() ?? []
+            PhoneNumbers = entity.PhoneNumbers?.Select(pn => CustomerPhoneNumberFactory.ToModel(pn)).ToList() ?? [],
+            Projects = entity.Projects?.Select(p => ProjectFactory.ToModel(p)).ToList() ?? []
         };
     }
 }

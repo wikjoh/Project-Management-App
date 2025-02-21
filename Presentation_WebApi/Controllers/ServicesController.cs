@@ -41,7 +41,7 @@ public class ServicesController(IServiceService serviceService) : ControllerBase
         var result = await _serviceService.GetServiceByIdWithUnitAsync(id);
 
         return result.Success
-            ? Ok(((ServiceResult<ServiceModel>)result).Data)
+            ? Ok(((ServiceResult<ServiceModelDetailed>)result).Data)
             : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
