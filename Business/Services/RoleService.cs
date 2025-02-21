@@ -45,6 +45,15 @@ public class RoleService(IRoleRepository roleRepository) : IRoleService
         return ServiceResult<IEnumerable<RoleModel>>.Ok(roleList);
     }
 
+    public async Task<IServiceResult> GetRoleByIdAsync(int id)
+    {
+        var roleEntity = await _roleRepository.GetOneAsync(x => x.Id == id);
+        if (roleEntity == null)
+            return ServiceResult.NotFound($"Role with id {id} not found.");
+
+        var role = RoleFactory.ToModel(roleEntity);
+        return ServiceResult<RoleModel>.Ok(role);
+    }
 
 
     // DELETE

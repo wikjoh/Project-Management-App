@@ -37,6 +37,16 @@ public class RolesController(IRoleService roleService) : ControllerBase
             : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
+    // Get role by id
+    [HttpGet("id/{id}")]
+    public async Task<IActionResult> GetRoleByIdAsync(int id)
+    {
+        var result = await _roleService.GetRoleByIdAsync(id);
+
+        return result.Success
+            ? Ok(((ServiceResult<RoleModel>)result).Data)
+            : StatusCode(result.StatusCode, result.ErrorMessage);
+    }
 
     // Delete role
     [HttpDelete]
