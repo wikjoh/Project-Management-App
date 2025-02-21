@@ -31,15 +31,15 @@ const ProjectForm = () => {
   const [formData, setFormData] = useState({
     id: '',
     name: '',
-    startDate: '',
-    endDate: '',
+    startDate: null,
+    endDate: null,
     projectManagerId: '',
     customerName: '',
     customerId: '',
     serviceId: '',
-    serviceQuantity: '',
+    serviceQuantity: null,
     statusId: '',
-    totalPrice: '',
+    totalPrice: null,
   });
 
   useEffect(() => {
@@ -95,15 +95,15 @@ const ProjectForm = () => {
       setFormData({
         id: project.id,
         name: project.name,
-        startDate: project.startDate?.split('T')[0] || '',
-        endDate: project.endDate?.split('T')[0] || '',
+        startDate: project.startDate,
+        endDate: project.endDate,
         projectManagerId: project.projectManagerId,
         customerName: project.customerName,
         customerId: project.customerId,
         serviceId: project.serviceId,
-        serviceQuantity: project.serviceQuantity || '',
+        serviceQuantity: project.serviceQuantity,
         statusId: project.statusId,
-        totalPrice: project.totalPrice || '',
+        totalPrice: project.totalPrice,
       });
     } catch (error) {
       console.error('Error fetching project:', error);
@@ -259,9 +259,6 @@ const ProjectForm = () => {
                 type="number"
                 value={formData.totalPrice}
                 onChange={(e) => setFormData({ ...formData, totalPrice: e.target.value })}
-                InputProps={{
-                  startAdornment: <InputAdornment position="start">$</InputAdornment>
-                }}
               />
             </Grid>
 
