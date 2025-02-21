@@ -8,31 +8,85 @@ import {
   Typography,
   Grid,
   Divider,
+  Autocomplete,
+  InputAdornment,
 } from '@mui/material';
-import { getProject, createProject, updateProject } from '../../services/api';
+import { 
+  getProject, 
+  createProject, 
+  updateProject, 
+  getCustomers,
+  getServices,
+  getUsers,
+  getProjectStatuses,
+} from '../../services/api';
 
 const ProjectForm = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const [customers, setCustomers] = useState([]);
+  const [services, setServices] = useState([]);
+  const [projectManagers, setProjectManagers] = useState([]);
+  const [statuses, setStatuses] = useState([]);
   const [formData, setFormData] = useState({
     id: '',
     name: '',
-    startDate: null,
-    endDate: null,
+    startDate: '',
+    endDate: '',
     projectManagerId: '',
     customerName: '',
     customerId: '',
     serviceId: '',
-    serviceQuantity: null,
+    serviceQuantity: '',
     statusId: '',
-    totalPrice: null,
+    totalPrice: '',
   });
 
   useEffect(() => {
+    fetchCustomers();
+    fetchServices();
+    fetchProjectManagers();
+    fetchStatuses();
     if (id) {
       fetchProject();
     }
   }, [id]);
+
+  const fetchCustomers = async () => {
+    try {
+      const response = await getCustomers();
+      setCustomers(response.data);
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+    }
+  };
+
+  const fetchServices = async () => {
+    try {
+      const response = await getServices();
+      setServices(response.data);
+    } catch (error) {
+      console.error('Error fetching services:', error);
+    }
+  };
+
+  const fetchProjectManagers = async () => {
+    try {
+      const response = await getUsers();
+      setProjectManagers(response.data);
+    } catch (error) {
+      console.error('Error fetching project managers:', error);
+    }
+  };
+
+  const fetchStatuses = async () => {
+    try {
+      const response = await getProjectStatuses();
+      setStatuses(response.data);
+    } catch (error) {
+      console.error('Error fetching project statuses:', error);
+    }
+  };
 
   const fetchProject = async () => {
     try {
@@ -41,15 +95,15 @@ const ProjectForm = () => {
       setFormData({
         id: project.id,
         name: project.name,
-        startDate: project.startDate,
-        endDate: project.endDate,
+        startDate: project.startDate?.split('T')[0] || '',
+        endDate: project.endDate?.split('T')[0] || '',
         projectManagerId: project.projectManagerId,
         customerName: project.customerName,
         customerId: project.customerId,
         serviceId: project.serviceId,
-        serviceQuantity: project.serviceQuantity,
+        serviceQuantity: project.serviceQuantity || '',
         statusId: project.statusId,
-        totalPrice: project.totalPrice,
+        totalPrice: project.totalPrice || '',
       });
     } catch (error) {
       console.error('Error fetching project:', error);
@@ -94,13 +148,22 @@ const ProjectForm = () => {
               />
             </Grid>
             <Grid item xs={4}>
-              <TextField
+              <Autocomplete
                 fullWidth
-                label="Project Status"
-                type="number"
-                value={formData.statusId}
-                onChange={(e) => setFormData({ ...formData, statusId: e.target.value })}
-                required
+                options={statuses}
+                getOptionLabel={(option) => option.name}
+                value={statuses.find(status => status.id === formData.statusId) || null}
+                onChange={(e, newValue) => setFormData({
+                  ...formData,
+                  statusId: newValue?.id || ''
+                })}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Project Status"
+                    required
+                  />
+                )}
               />
             </Grid>
 
@@ -133,23 +196,24 @@ const ProjectForm = () => {
                 Customer Information
               </Typography>
             </Grid>
-            <Grid item xs={8}>
-              <TextField
+            <Grid item xs={12}>
+              <Autocomplete
                 fullWidth
-                label="Customer Name"
-                value={formData.customerName}
-                onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
-                required
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <TextField
-                fullWidth
-                label="Customer ID"
-                type="number"
-                value={formData.customerId}
-                onChange={(e) => setFormData({ ...formData, customerId: e.target.value })}
-                required
+                options={customers}
+                getOptionLabel={(option) => option.displayName}
+                value={customers.find(customer => customer.id === formData.customerId) || null}
+                onChange={(e, newValue) => setFormData({
+                  ...formData,
+                  customerId: newValue?.id || '',
+                  customerName: newValue?.displayName || ''
+                })}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Customer"
+                    required
+                  />
+                )}
               />
             </Grid>
 
@@ -160,17 +224,26 @@ const ProjectForm = () => {
                 Service Details
               </Typography>
             </Grid>
-            <Grid item xs={4}>
-              <TextField
+            <Grid item xs={6}>
+              <Autocomplete
                 fullWidth
-                label="Service ID"
-                type="number"
-                value={formData.serviceId}
-                onChange={(e) => setFormData({ ...formData, serviceId: e.target.value })}
-                required
+                options={services}
+                getOptionLabel={(option) => option.name}
+                value={services.find(service => service.id === formData.serviceId) || null}
+                onChange={(e, newValue) => setFormData({
+                  ...formData,
+                  serviceId: newValue?.id || ''
+                })}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Service"
+                    required
+                  />
+                )}
               />
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={3}>
               <TextField
                 fullWidth
                 label="Service Quantity"
@@ -179,7 +252,7 @@ const ProjectForm = () => {
                 onChange={(e) => setFormData({ ...formData, serviceQuantity: e.target.value })}
               />
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={3}>
               <TextField
                 fullWidth
                 label="Total Price"
@@ -187,7 +260,7 @@ const ProjectForm = () => {
                 value={formData.totalPrice}
                 onChange={(e) => setFormData({ ...formData, totalPrice: e.target.value })}
                 InputProps={{
-                  startAdornment: '$'
+                  startAdornment: <InputAdornment position="start">$</InputAdornment>
                 }}
               />
             </Grid>
@@ -200,13 +273,22 @@ const ProjectForm = () => {
               </Typography>
             </Grid>
             <Grid item xs={12}>
-              <TextField
+              <Autocomplete
                 fullWidth
-                label="Project Manager ID"
-                type="number"
-                value={formData.projectManagerId}
-                onChange={(e) => setFormData({ ...formData, projectManagerId: e.target.value })}
-                required
+                options={projectManagers}
+                getOptionLabel={(option) => `${option.firstName} ${option.lastName}`}
+                value={projectManagers.find(manager => manager.id === formData.projectManagerId) || null}
+                onChange={(e, newValue) => setFormData({
+                  ...formData,
+                  projectManagerId: newValue?.id || ''
+                })}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Project Manager"
+                    required
+                  />
+                )}
               />
             </Grid>
           </Grid>
