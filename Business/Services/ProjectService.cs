@@ -115,12 +115,9 @@ public class ProjectService(IProjectRepository projectRepository) : IProjectServ
 
 
     // DELETE
-    public async Task<IServiceResult> DeleteProject(ProjectModel model)
+    public async Task<IServiceResult> DeleteProjectById(int id)
     {
-        if (model == null)
-            return ServiceResult.BadRequest("Form cannot be empty.");
-
-        var projectEntity = await _projectRepository.GetOneAsync(x => x.Id == model.Id);
+        var projectEntity = await _projectRepository.GetOneAsync(x => x.Id == id);
         if (projectEntity == null)
             return ServiceResult.NotFound("Project not found.");
 

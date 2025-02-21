@@ -5,7 +5,7 @@ namespace Business.Interfaces;
 public interface IProjectService
 {
     Task<IServiceResult> CreateProject(ProjectRegistrationForm form);
-    Task<IServiceResult> DeleteProject(ProjectModel model);
+    Task<IServiceResult> DeleteProjectById(int id);
     Task<IServiceResult> GetAllProjects();
     Task<IServiceResult> GetAllProjectsDetailed();
     Task<IServiceResult> GetProjectById(int id);

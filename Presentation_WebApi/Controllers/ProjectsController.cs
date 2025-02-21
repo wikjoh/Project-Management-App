@@ -78,10 +78,10 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
     }
 
     // Delete project
-    [HttpDelete]
-    public async Task<IActionResult> Delete(ProjectModel form)
+    [HttpDelete("id/{id}")]
+    public async Task<IActionResult> DeleteById(int id)
     {
-        var result = await _projectService.DeleteProject(form);
+        var result = await _projectService.DeleteProjectById(id);
 
         return result.Success
             ? Ok("Project deleted successfully.")
