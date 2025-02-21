@@ -40,7 +40,7 @@ public class UsersController(IUserService userService) : ControllerBase
         var result = await _userService.GetByIdWithRolesAsync(id);
 
         return result.Success
-            ? Ok(((ServiceResult<UserModel>)result).Data)
+            ? Ok(((ServiceResult<UserModelDetailed>)result).Data)
             : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
@@ -51,7 +51,7 @@ public class UsersController(IUserService userService) : ControllerBase
         var result = await _userService.GetByEmailWithRolesAsync(email);
 
         return result.Success
-            ? Ok(((ServiceResult<UserModel>)result).Data)
+            ? Ok(((ServiceResult<UserModelDetailed>)result).Data)
             : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 

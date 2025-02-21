@@ -22,14 +22,14 @@ public class ServiceUnitService(IServiceUnitRepository serviceUnitRepository) : 
         if (serviceUnitExists == true)
             return ServiceResult.AlreadyExists($"Unit {form.Unit} already exists.");
 
-        var serviceUnitEntity = ServiceUnitFactory.Create(form);
+        var serviceUnitEntity = ServiceUnitFactory.ToEntity(form);
 
         await _serviceUnitRepository.CreateAsync(serviceUnitEntity);
         var result = await _serviceUnitRepository.SaveAsync() > 0;
         if (!result)
             return ServiceResult.InternalServerError("Failed creating service unit.");
 
-        var serviceUnit = ServiceUnitFactory.Create(serviceUnitEntity);
+        var serviceUnit = ServiceUnitFactory.ToModel(serviceUnitEntity);
         return ServiceResult<ServiceUnitModel>.Ok(serviceUnit);
     }
 
@@ -38,7 +38,7 @@ public class ServiceUnitService(IServiceUnitRepository serviceUnitRepository) : 
     public async Task<IServiceResult> GetAllServiceUnitsAsync()
     {
         var serviceUnits = await _serviceUnitRepository.GetAllAsync();
-        var serviceUnitList = serviceUnits != null ? serviceUnits.Select(x => ServiceUnitFactory.Create(x)) : [];
+        var serviceUnitList = serviceUnits != null ? serviceUnits.Select(x => ServiceUnitFactory.ToModel(x)) : [];
 
         return ServiceResult<IEnumerable<ServiceUnitModel>>.Ok(serviceUnitList);
     }
@@ -50,7 +50,7 @@ public class ServiceUnitService(IServiceUnitRepository serviceUnitRepository) : 
         if (serviceUnitEntity == null)
             return ServiceResult.NotFound($"Service unit with id {id} does not exist.");
 
-        var serviceUnit = ServiceUnitFactory.Create(serviceUnitEntity);
+        var serviceUnit = ServiceUnitFactory.ToModel(serviceUnitEntity);
         return ServiceResult<ServiceUnitModel>.Ok(serviceUnit);
     }
 
@@ -73,7 +73,7 @@ public class ServiceUnitService(IServiceUnitRepository serviceUnitRepository) : 
             return ServiceResult.InternalServerError("Failed updating service unit.");
 
         var updatedEntity = await _serviceUnitRepository.GetOneAsync(x => x.Id == form.Id);
-        return ServiceResult<ServiceUnitModel>.Ok(ServiceUnitFactory.Create(updatedEntity!));
+        return ServiceResult<ServiceUnitModel>.Ok(ServiceUnitFactory.ToModel(updatedEntity!));
     }
 
 

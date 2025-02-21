@@ -29,7 +29,7 @@ public class CustomersController(ICustomerService customerService) : ControllerB
         var result = await _customerService.GetAllWithPhoneAsync();
 
         return result.Success
-            ? Ok(((ServiceResult<IEnumerable<CustomerModel>>)result).Data)
+            ? Ok(((ServiceResult<IEnumerable<CustomerModelDetailed>>)result).Data)
             : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
@@ -40,7 +40,7 @@ public class CustomersController(ICustomerService customerService) : ControllerB
         var result = await _customerService.GetByEmailWithPhoneAsync(email);
 
         return result.Success
-            ? Ok(((ServiceResult<CustomerModel>)result).Data)
+            ? Ok(((ServiceResult<CustomerModelDetailed>)result).Data)
             : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
@@ -51,7 +51,7 @@ public class CustomersController(ICustomerService customerService) : ControllerB
         var result = await _customerService.GetByIdWithPhoneAsync(id);
 
         return result.Success
-            ? Ok(((ServiceResult<CustomerModel>)result).Data)
+            ? Ok(((ServiceResult<CustomerModelDetailed>)result).Data)
             : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
@@ -62,7 +62,7 @@ public class CustomersController(ICustomerService customerService) : ControllerB
         var result = await _customerService.UpdateCustomerAsync(form);
 
         return result.Success
-            ? Ok(((ServiceResult<CustomerModel>)result).Data)
+            ? Ok(((ServiceResult<CustomerModelDetailed>)result).Data)
             : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 

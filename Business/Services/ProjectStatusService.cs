@@ -25,14 +25,14 @@ public class ProjectStatusService(IProjectStatusRepository projectStatusReposito
         if (projectStatusExists == null)
             return ServiceResult.InternalServerError("Failed verifying if project status exists.");
 
-        var entity = ProjectStatusFactory.Create(form);
+        var entity = ProjectStatusFactory.ToEntity(form);
 
         await _projectStatusRepository.CreateAsync(entity);
         var result = await _projectStatusRepository.SaveAsync() > 0;
         if (!result)
             return ServiceResult.InternalServerError("Failed creating service status.");
 
-        var projectStatus = ProjectStatusFactory.Create(entity);
+        var projectStatus = ProjectStatusFactory.ToModel(entity);
         return ServiceResult<ProjectStatusModel>.Ok(projectStatus);
     }
 
@@ -41,7 +41,7 @@ public class ProjectStatusService(IProjectStatusRepository projectStatusReposito
     public async Task<IServiceResult> GetAllProjectStatuses()
     {
         var projectStatusEntities = await _projectStatusRepository.GetAllAsync();
-        var projectStatusList = projectStatusEntities != null ? projectStatusEntities.Select(x => ProjectStatusFactory.Create(x)) : [];
+        var projectStatusList = projectStatusEntities != null ? projectStatusEntities.Select(x => ProjectStatusFactory.ToModel(x)) : [];
 
         return ServiceResult<IEnumerable<ProjectStatusModel>>.Ok(projectStatusList);
     }
@@ -53,7 +53,7 @@ public class ProjectStatusService(IProjectStatusRepository projectStatusReposito
         if (projectStatusEntity == null)
             return ServiceResult.NotFound($"Service status with id {id} not found");
 
-        var projectStatus = ProjectStatusFactory.Create(projectStatusEntity);
+        var projectStatus = ProjectStatusFactory.ToModel(projectStatusEntity);
         return ServiceResult<ProjectStatusModel>.Ok(projectStatus);
     }
 
@@ -80,7 +80,7 @@ public class ProjectStatusService(IProjectStatusRepository projectStatusReposito
         if (updatedEntity == null)
             return ServiceResult.InternalServerError("Retrieved null entity after update.");
 
-        var updatedModel = ProjectStatusFactory.Create(updatedEntity);
+        var updatedModel = ProjectStatusFactory.ToModel(updatedEntity);
         return ServiceResult<ProjectStatusModel>.Ok(updatedModel);
     }
 

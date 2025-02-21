@@ -24,14 +24,14 @@ public class RoleService(IRoleRepository roleRepository) : IRoleService
         if (roleExists == null)
             return ServiceResult.InternalServerError("Failed verifying if role already exists");
 
-        var roleEntity = RoleFactory.Create(form);
+        var roleEntity = RoleFactory.ToEntity(form);
 
         await _roleRepository.CreateAsync(roleEntity);
         var result = await _roleRepository.SaveAsync() > 0;
         if (!result)
             return ServiceResult.InternalServerError("Failed creating role.");
 
-        var role = RoleFactory.Create(roleEntity);
+        var role = RoleFactory.ToModel(roleEntity);
         return ServiceResult<RoleModel>.Ok(role);
     }
 
@@ -41,7 +41,7 @@ public class RoleService(IRoleRepository roleRepository) : IRoleService
     {
         var roles = await _roleRepository.GetAllAsync();
 
-        var roleList = roles.Select(x => RoleFactory.Create(x));
+        var roleList = roles.Select(x => RoleFactory.ToModel(x));
         return ServiceResult<IEnumerable<RoleModel>>.Ok(roleList);
     }
 

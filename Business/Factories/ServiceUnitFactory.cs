@@ -12,7 +12,7 @@ public static class ServiceUnitFactory
     }
 
 
-    public static ServiceUnitEntity Create(ServiceUnitRegistrationForm form)
+    public static ServiceUnitEntity ToEntity(ServiceUnitRegistrationForm form)
     {
         return new ServiceUnitEntity
         {
@@ -21,7 +21,7 @@ public static class ServiceUnitFactory
     }
 
 
-    public static ServiceUnitModel Create(ServiceUnitEntity entity)
+    public static ServiceUnitModel ToModel(ServiceUnitEntity entity)
     {
         return new ServiceUnitModel
         {

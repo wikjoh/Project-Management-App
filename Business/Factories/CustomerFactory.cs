@@ -12,7 +12,7 @@ public static class CustomerFactory
     }
 
 
-    public static CustomerEntity Create(CustomerRegistrationForm form)
+    public static CustomerEntity ToEntity(CustomerRegistrationForm form)
     {
             return new CustomerEntity
             {
@@ -25,9 +25,22 @@ public static class CustomerFactory
     }
 
 
-    public static CustomerModel Create(CustomerEntity entity)
+    public static CustomerModel ToModel(CustomerEntity entity)
     {
         return new CustomerModel
+        {
+            Id = entity.Id,
+            IsCompany = entity.IsCompany,
+            FirstName = entity.FirstName,
+            LastName = entity.LastName,
+            CompanyName = entity.CompanyName,
+            EmailAddress = entity.EmailAddress
+        };
+    }
+
+    public static CustomerModelDetailed ToModelDetailed(CustomerEntity entity)
+    {
+        return new CustomerModelDetailed
         {
             Id = entity.Id,
             IsCompany = entity.IsCompany,

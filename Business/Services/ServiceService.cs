@@ -23,7 +23,7 @@ public class ServiceService(IServiceRepository serviceRepository) : IServiceServ
         if (serviceExists == true)
             return ServiceResult.AlreadyExists($"Service {form.Name} already exists.");
 
-        var serviceEntity = ServiceFactory.Create(form);
+        var serviceEntity = ServiceFactory.ToEntity(form);
 
         await _serviceRepository.CreateAsync(serviceEntity);
         var result = await _serviceRepository.SaveAsync() > 0;
@@ -31,7 +31,7 @@ public class ServiceService(IServiceRepository serviceRepository) : IServiceServ
             return ServiceResult.InternalServerError("Failed creating service.");
 
         var serviceEntityWithUnit = await _serviceRepository.GetOneAsync(x => x.Id == serviceEntity.Id, q => q.Include(s => s.Unit));
-        return ServiceResult<ServiceModel>.Ok(ServiceFactory.Create(serviceEntityWithUnit!));
+        return ServiceResult<ServiceModelDetailed>.Ok(ServiceFactory.ToModelDetailed(serviceEntityWithUnit!));
     }
 
 
@@ -39,9 +39,9 @@ public class ServiceService(IServiceRepository serviceRepository) : IServiceServ
     public async Task<IServiceResult> GetAllServicesWithUnitAsync()
     {
         var serviceEntities = await _serviceRepository.GetAllAsync(q => q.Include(s => s.Unit));
-        var serviceList = serviceEntities != null ? serviceEntities.Select(x => ServiceFactory.Create(x)) : [];
+        var serviceList = serviceEntities != null ? serviceEntities.Select(x => ServiceFactory.ToModelDetailed(x)) : [];
 
-        return ServiceResult<IEnumerable<ServiceModel>>.Ok(serviceList);
+        return ServiceResult<IEnumerable<ServiceModelDetailed>>.Ok(serviceList);
     }
 
 
@@ -52,8 +52,8 @@ public class ServiceService(IServiceRepository serviceRepository) : IServiceServ
         if (serviceEntity == null)
             return ServiceResult.NotFound($"Service with id {id} does not exist.");
 
-        var service = ServiceFactory.Create(serviceEntity);
-        return ServiceResult<ServiceModel>.Ok(service);
+        var service = ServiceFactory.ToModelDetailed(serviceEntity);
+        return ServiceResult<ServiceModelDetailed>.Ok(service);
     }
 
 
@@ -77,7 +77,7 @@ public class ServiceService(IServiceRepository serviceRepository) : IServiceServ
             return ServiceResult.InternalServerError("Failed updating service.");
 
         var updatedEntity = await _serviceRepository.GetOneAsync(x => x.Id == form.Id, q => q.Include(s => s.Unit));
-        return ServiceResult<ServiceModel>.Ok(ServiceFactory.Create(updatedEntity!));
+        return ServiceResult<ServiceModel>.Ok(ServiceFactory.ToModel(updatedEntity!));
     }
 
 

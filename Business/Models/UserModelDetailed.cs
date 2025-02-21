@@ -1,6 +1,6 @@
 ﻿namespace Business.Models;
 
-public class UserModel
+public class UserModelDetailed
 {
     public int Id { get; set; }
 
@@ -11,4 +11,7 @@ public class UserModel
     public string DisplayName { get; set; } = null!;
 
     public string EmailAddress { get; set; } = null!;
+
+    public List<RoleModel> Roles { get; set; } = [];
+    public List<ProjectModel> Projects { get; set; } = [];
 }

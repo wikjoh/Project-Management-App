@@ -12,7 +12,7 @@ public class CustomerPhoneNumberFactory
     }
 
 
-    public static CustomerPhoneNumberEntity Create(CustomerPhoneNumberForm form)
+    public static CustomerPhoneNumberEntity ToEntity(CustomerPhoneNumberForm form)
     {
         return new CustomerPhoneNumberEntity
         {
@@ -25,7 +25,7 @@ public class CustomerPhoneNumberFactory
     }
 
 
-    public static CustomerPhoneNumberModel Create(CustomerPhoneNumberEntity entity)
+    public static CustomerPhoneNumberModel ToModel(CustomerPhoneNumberEntity entity)
     {
         return new CustomerPhoneNumberModel
         {

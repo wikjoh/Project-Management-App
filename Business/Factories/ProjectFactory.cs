@@ -12,7 +12,7 @@ public static class ProjectFactory
     }
 
 
-    public static ProjectEntity Create(ProjectRegistrationForm form)
+    public static ProjectEntity ToEntity(ProjectRegistrationForm form)
     {
         return new ProjectEntity
         {
@@ -30,7 +30,7 @@ public static class ProjectFactory
     }
 
 
-    public static ProjectModel Create(ProjectEntity entity)
+    public static ProjectModel ToModel(ProjectEntity entity)
     {
         return new ProjectModel
         {
@@ -45,6 +45,27 @@ public static class ProjectFactory
             ServiceQuantity = entity.ServiceQuantity,
             TotalPrice = entity.TotalPrice,
             StatusId = entity.StatusId,
+        };
+    }
+
+
+    public static ProjectModelDetailed ToModelDetailed(ProjectEntity entity)
+    {
+        return new ProjectModelDetailed
+        {
+            Id = entity.Id,
+            Name = entity.Name,
+            StartDate = entity.StartDate,
+            EndDate = entity.EndDate,
+            ProjectManagerId = entity.ProjectManagerId,
+            CustomerName = entity.CustomerName,
+            CustomerId = entity.CustomerId,
+            ServiceId = entity.ServiceId,
+            ServiceQuantity = entity.ServiceQuantity,
+            TotalPrice = entity.TotalPrice,
+            StatusId = entity.StatusId,
+            Customer = CustomerFactory.ToModel(entity.Customer),
+            User = UserFactory.ToModel(entity.ProjectManager)
         };
     }
 }

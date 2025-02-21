@@ -24,14 +24,14 @@ public class CustomerPhoneNumberService(ICustomerPhoneNumberRepository customerP
         if (phoneNumberExists == null)
             return ServiceResult.InternalServerError("Failed verifying if phone number exists");
 
-        var entity = CustomerPhoneNumberFactory.Create(form);
+        var entity = CustomerPhoneNumberFactory.ToEntity(form);
 
         await _customerPhoneNumberRepository.CreateAsync(entity);
         var result = await _customerPhoneNumberRepository.SaveAsync() > 0;
         if (!result)
             return ServiceResult.InternalServerError("Failed creating customer phone number.");
 
-        var phoneNumber = CustomerPhoneNumberFactory.Create(entity);
+        var phoneNumber = CustomerPhoneNumberFactory.ToModel(entity);
         return ServiceResult<CustomerPhoneNumberModel>.Ok(phoneNumber);
     }
 
@@ -40,7 +40,7 @@ public class CustomerPhoneNumberService(ICustomerPhoneNumberRepository customerP
     public async Task<IServiceResult> GetAllPhoneNumbersByCustomerIdAsync(int id)
     {
         var phoneNumbers = await _customerPhoneNumberRepository.GetAllWhereAsync(x => x.CustomerId == id);
-        var phoneNumbersList = phoneNumbers != null ? phoneNumbers.Select(x => CustomerPhoneNumberFactory.Create(x)) : [];
+        var phoneNumbersList = phoneNumbers != null ? phoneNumbers.Select(x => CustomerPhoneNumberFactory.ToModel(x)) : [];
 
         return ServiceResult<IEnumerable<CustomerPhoneNumberModel>>.Ok(phoneNumbersList);
     }
@@ -67,7 +67,7 @@ public class CustomerPhoneNumberService(ICustomerPhoneNumberRepository customerP
             return ServiceResult.InternalServerError("Failed updating phone number.");
 
         var updated = await _customerPhoneNumberRepository.GetOneAsync(x => x.PhoneNumber == form.PhoneNumber && x.CustomerId == form.CustomerId);
-        return ServiceResult<CustomerPhoneNumberModel?>.Ok(CustomerPhoneNumberFactory.Create(updated!));
+        return ServiceResult<CustomerPhoneNumberModel?>.Ok(CustomerPhoneNumberFactory.ToModel(updated!));
     }
 
 

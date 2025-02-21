@@ -12,7 +12,7 @@ public static class RoleFactory
     }
 
 
-    public static RoleEntity Create(RoleRegistrationForm form)
+    public static RoleEntity ToEntity(RoleRegistrationForm form)
     {
         return new RoleEntity
         {
@@ -21,7 +21,7 @@ public static class RoleFactory
     }
 
 
-    public static RoleModel Create(RoleEntity entity)
+    public static RoleModel ToModel(RoleEntity entity)
     {
         return new RoleModel
         {

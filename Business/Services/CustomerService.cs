@@ -25,7 +25,7 @@ public class CustomerService(ICustomerRepository customerRepository, ICustomerPh
         if (customerExists == true)
             return ServiceResult.AlreadyExists("Customer with given email address already exists.");
 
-        var customerEntity = CustomerFactory.Create(form);
+        var customerEntity = CustomerFactory.ToEntity(form);
 
         await _customerRepository.BeginTransactionAsync();
 
@@ -40,8 +40,8 @@ public class CustomerService(ICustomerRepository customerRepository, ICustomerPh
             if (!phoneNumberResult.Success) throw new Exception("Failed to create phone number entity.");
 
             await _customerRepository.CommitTransactionAsync();
-            var createdCustomerWithPhoneNumber = CustomerFactory.Create((await _customerRepository.GetOneAsync(x => x.Id == customerEntity.Id, q => q.Include(c => c.PhoneNumbers)))!);
-            return ServiceResult<CustomerModel>.Created(createdCustomerWithPhoneNumber);
+            var createdCustomerWithPhoneNumber = CustomerFactory.ToModelDetailed((await _customerRepository.GetOneAsync(x => x.Id == customerEntity.Id, q => q.Include(c => c.PhoneNumbers)))!);
+            return ServiceResult<CustomerModelDetailed>.Created(createdCustomerWithPhoneNumber);
         }
         catch (Exception ex)
         {
@@ -59,7 +59,7 @@ public class CustomerService(ICustomerRepository customerRepository, ICustomerPh
         var customers = await _customerRepository.GetAllAsync(q => q.Include(c => c.PhoneNumbers));
         customers ??= [];
 
-        var customerListWithPhone = ServiceResult<IEnumerable<CustomerModel>?>.Ok(customers.Select(x => CustomerFactory.Create(x)));
+        var customerListWithPhone = ServiceResult<IEnumerable<CustomerModelDetailed>?>.Ok(customers.Select(x => CustomerFactory.ToModelDetailed(x)));
         return customerListWithPhone;
     }
 
@@ -70,8 +70,8 @@ public class CustomerService(ICustomerRepository customerRepository, ICustomerPh
         if (customerEntity == null)
             return ServiceResult.NotFound($"Customer with id {id} not found.");
 
-        var customerWithPhone = CustomerFactory.Create(customerEntity);
-        return ServiceResult<CustomerModel>.Ok(customerWithPhone);
+        var customerWithPhone = CustomerFactory.ToModelDetailed(customerEntity);
+        return ServiceResult<CustomerModelDetailed>.Ok(customerWithPhone);
     }
 
     public async Task<IServiceResult> GetByEmailWithPhoneAsync(string emailAddress)
@@ -81,8 +81,8 @@ public class CustomerService(ICustomerRepository customerRepository, ICustomerPh
         if (customerEntity == null)
             return ServiceResult.NotFound($"Customer with email address {emailAddress} not found.");
 
-        var customerWithPhone = CustomerFactory.Create(customerEntity);
-        return ServiceResult<CustomerModel>.Ok(customerWithPhone);
+        var customerWithPhone = CustomerFactory.ToModelDetailed(customerEntity);
+        return ServiceResult<CustomerModelDetailed>.Ok(customerWithPhone);
     }
 
 
@@ -109,8 +109,8 @@ public class CustomerService(ICustomerRepository customerRepository, ICustomerPh
             return ServiceResult.InternalServerError("Updating customer failed.");
 
         customer = await _customerRepository.GetOneAsync(x => x.Id == form.Id);
-        return ServiceResult<CustomerModel?>.Ok(customer != null
-            ? CustomerFactory.Create(customer)
+        return ServiceResult<CustomerModelDetailed?>.Ok(customer != null
+            ? CustomerFactory.ToModelDetailed(customer)
             : null);
     }
 

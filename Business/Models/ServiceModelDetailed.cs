@@ -1,6 +1,6 @@
 ﻿namespace Business.Models;
 
-public class ServiceModel
+public class ServiceModelDetailed
 {
     public int Id { get; set; }
 
@@ -9,4 +9,6 @@ public class ServiceModel
     public decimal Price { get; set; }
 
     public int UnitId { get; set; }
+
+    public string? Unit { get; init; } = null;
 }

@@ -25,7 +25,7 @@ public class UserService(IUserRepository userRepository, IUserRoleService userRo
         if (customerExistss == true)
             return ServiceResult.AlreadyExists("User with given email address already exists.");
 
-        var userEntity = UserFactory.Create(form);
+        var userEntity = UserFactory.ToEntity(form);
 
         await _userRepository.BeginTransactionAsync();
 
@@ -45,8 +45,8 @@ public class UserService(IUserRepository userRepository, IUserRoleService userRo
 
             await _userRepository.CommitTransactionAsync();
             var userEntityWithRoles = await _userRepository.GetOneAsync(x => x.Id == userEntity.Id, q => q.Include(u => u.UserRoles).ThenInclude(ur => ur.Role));
-            var createdUserWithUserRoles = UserFactory.Create(userEntityWithRoles!);
-            return ServiceResult<UserModel>.Created(createdUserWithUserRoles);
+            var createdUserWithUserRoles = UserFactory.ToModelDetailed(userEntityWithRoles!);
+            return ServiceResult<UserModelDetailed>.Created(createdUserWithUserRoles);
         }
         catch (Exception ex)
         {
@@ -64,8 +64,8 @@ public class UserService(IUserRepository userRepository, IUserRoleService userRo
         var users = await _userRepository.GetAllAsync(q => q.Include(u => u.UserRoles).ThenInclude(ur => ur.Role));
         users ??= [];
 
-        var usersList = users.Select(x => UserFactory.Create(x));
-        return ServiceResult<IEnumerable<UserModel>>.Ok(usersList);
+        var usersListWithRoles = users.Select(x => UserFactory.ToModelDetailed(x));
+        return ServiceResult<IEnumerable<UserModelDetailed>>.Ok(usersListWithRoles);
     }
 
     public async Task<IServiceResult> GetByIdWithRolesAsync(int id)
@@ -75,8 +75,8 @@ public class UserService(IUserRepository userRepository, IUserRoleService userRo
         if (userEntity == null)
             return ServiceResult.NotFound($"User with id {id} not found.");
 
-        var user = UserFactory.Create(userEntity);
-        return ServiceResult<UserModel>.Ok(user);
+        var userWithRoles = UserFactory.ToModelDetailed(userEntity);
+        return ServiceResult<UserModelDetailed>.Ok(userWithRoles);
     }
 
     public async Task<IServiceResult> GetByEmailWithRolesAsync(string email)
@@ -86,8 +86,8 @@ public class UserService(IUserRepository userRepository, IUserRoleService userRo
         if (userEntity == null)
             return ServiceResult.NotFound($"User with email {email} not found.");
 
-        var user = UserFactory.Create(userEntity);
-        return ServiceResult<UserModel>.Ok(user);
+        var userWithRoles = UserFactory.ToModelDetailed(userEntity);
+        return ServiceResult<UserModelDetailed>.Ok(userWithRoles);
     }
 
 
@@ -111,7 +111,7 @@ public class UserService(IUserRepository userRepository, IUserRoleService userRo
         if (!result)
             return ServiceResult.InternalServerError("Updating user failed.");
 
-        var userModel = UserFactory.Create((await _userRepository.GetOneAsync(x => x.Id == form.Id))!);
+        var userModel = UserFactory.ToModel((await _userRepository.GetOneAsync(x => x.Id == form.Id))!);
         return userModel != null
             ? ServiceResult<UserModel>.Ok(userModel)
             : ServiceResult.InternalServerError("Retrieved null user after update.");

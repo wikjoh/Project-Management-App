@@ -1,6 +1,6 @@
 ﻿namespace Business.Models;
 
-public class CustomerModel
+public class CustomerModelDetailed
 {
     public int Id { get; set; }
 
@@ -15,4 +15,8 @@ public class CustomerModel
     public string DisplayName { get; set; } = null!;
 
     public string EmailAddress { get; set; } = null!;
+
+    public List<CustomerPhoneNumberModel> PhoneNumbers { get; set; } = [];
+
+    public List<ProjectModel> Projects { get; set; } = [];
 }

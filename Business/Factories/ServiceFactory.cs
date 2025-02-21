@@ -13,7 +13,7 @@ public static class ServiceFactory
 
 
 
-    public static ServiceEntity Create(ServiceRegistrationForm form)
+    public static ServiceEntity ToEntity(ServiceRegistrationForm form)
     {
         return new ServiceEntity
         {
@@ -23,11 +23,20 @@ public static class ServiceFactory
         };
     }
 
-
-
-    public static ServiceModel Create(ServiceEntity entity)
+    public static ServiceModel ToModel(ServiceEntity entity)
     {
         return new ServiceModel
+        {
+            Id = entity.Id,
+            Name = entity.Name,
+            Price = entity.Price,
+            UnitId = entity.UnitId,
+        };
+    }
+
+    public static ServiceModelDetailed ToModelDetailed(ServiceEntity entity)
+    {
+        return new ServiceModelDetailed
         {
             Id = entity.Id,
             Name = entity.Name,

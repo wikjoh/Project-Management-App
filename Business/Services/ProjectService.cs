@@ -18,14 +18,14 @@ public class ProjectService(IProjectRepository projectRepository) : IProjectServ
         if (form == null)
             return ServiceResult.BadRequest("Form cannot be empty.");
 
-        var projectEntity = ProjectFactory.Create(form);
+        var projectEntity = ProjectFactory.ToEntity(form);
 
         await _projectRepository.CreateAsync(projectEntity);
         var result = await _projectRepository.SaveAsync() > 0;
         if (!result)
             return ServiceResult.InternalServerError("Failed creating project.");
 
-        var project = ProjectFactory.Create(projectEntity);
+        var project = ProjectFactory.ToModel(projectEntity);
         return ServiceResult<ProjectModel>.Ok(project);
     }
 
@@ -34,7 +34,7 @@ public class ProjectService(IProjectRepository projectRepository) : IProjectServ
     public async Task<IServiceResult> GetAllProjects()
     {
         var projectEntities = await _projectRepository.GetAllAsync();
-        var projectList = projectEntities != null ? projectEntities.Select(x => ProjectFactory.Create(x)) : [];
+        var projectList = projectEntities != null ? projectEntities.Select(x => ProjectFactory.ToModel(x)) : [];
 
         return ServiceResult<IEnumerable<ProjectModel>>.Ok(projectList);
     }
@@ -45,7 +45,7 @@ public class ProjectService(IProjectRepository projectRepository) : IProjectServ
         if (projectEntity == null)
             return ServiceResult.NotFound($"Project with id {id} not found.");
 
-        var project = ProjectFactory.Create(projectEntity);
+        var project = ProjectFactory.ToModel(projectEntity);
         return ServiceResult<ProjectModel>.Ok(project);
     }
 
@@ -80,7 +80,7 @@ public class ProjectService(IProjectRepository projectRepository) : IProjectServ
         if (updatedEntity == null)
             return ServiceResult.InternalServerError("Retrieved null entity after update.");
 
-        var updatedModel = ProjectFactory.Create(updatedEntity);
+        var updatedModel = ProjectFactory.ToModel(updatedEntity);
         return ServiceResult<ProjectModel>.Ok(updatedModel);
     }
 

@@ -27,7 +27,7 @@ public class UserRoleService(IUserRoleRepository userRoleRepository) : IUserRole
         if (!result)
             return ServiceResult.InternalServerError("Failed creating user role.");
 
-        var userRole = UserRoleFactory.Create(userRoleEntity);
+        var userRole = UserRoleFactory.ToModel(userRoleEntity);
         return ServiceResult<UserRoleModel>.Ok(userRole);
     }
 
@@ -36,7 +36,7 @@ public class UserRoleService(IUserRoleRepository userRoleRepository) : IUserRole
     public async Task<IServiceResult> GetAllRolesByUserIdAsync(int userId)
     {
         var userRoles = await _userRoleRepository.GetAllWhereAsync(x => x.UserId == userId);
-        var userRolesList = userRoles != null ? userRoles.Select(x => UserRoleFactory.Create(x)) : [];
+        var userRolesList = userRoles != null ? userRoles.Select(x => UserRoleFactory.ToModel(x)) : [];
 
         return ServiceResult<IEnumerable<UserRoleModel>>.Ok(userRolesList);
     }
@@ -44,7 +44,7 @@ public class UserRoleService(IUserRoleRepository userRoleRepository) : IUserRole
     public async Task<IServiceResult> GetAllUsersByRoleIdAsync(int roleId)
     {
         var userRoles = await _userRoleRepository.GetAllWhereAsync(x => x.RoleId == roleId);
-        var userRolesList = userRoles != null ? userRoles.Select(x => UserRoleFactory.Create(x)) : [];
+        var userRolesList = userRoles != null ? userRoles.Select(x => UserRoleFactory.ToModel(x)) : [];
 
         return ServiceResult<IEnumerable<UserRoleModel>>.Ok(userRolesList);
     }

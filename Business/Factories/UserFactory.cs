@@ -12,7 +12,7 @@ public static class UserFactory
     }
 
 
-    public static UserEntity Create(UserRegistrationForm form)
+    public static UserEntity ToEntity(UserRegistrationForm form)
     {
         return new UserEntity
         {
@@ -23,9 +23,21 @@ public static class UserFactory
     }
 
 
-    public static UserModel Create(UserEntity entity)
+    public static UserModel ToModel(UserEntity entity)
     {
         return new UserModel
+        {
+            Id = entity.Id,
+            FirstName = entity.FirstName,
+            LastName = entity.LastName,
+            DisplayName = entity.DisplayName,
+            EmailAddress = entity.EmailAddress,
+        };
+    }
+
+    public static UserModelDetailed ToModelDetailed(UserEntity entity)
+    {
+        return new UserModelDetailed
         {
             Id = entity.Id,
             FirstName = entity.FirstName,

@@ -12,7 +12,7 @@ public static class ProjectStatusFactory
     }
 
 
-    public static ProjectStatusEntity Create(ProjectStatusRegistrationForm entity)
+    public static ProjectStatusEntity ToEntity(ProjectStatusRegistrationForm entity)
     {
         return new ProjectStatusEntity
         {
@@ -21,7 +21,7 @@ public static class ProjectStatusFactory
     }
 
 
-    public static ProjectStatusModel Create(ProjectStatusEntity entity)
+    public static ProjectStatusModel ToModel(ProjectStatusEntity entity)
     {
         return new ProjectStatusModel
         {

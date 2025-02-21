@@ -15,7 +15,7 @@ public static class UserRoleFactory
     }
 
 
-    public static UserRoleModel Create(UserRoleEntity entity)
+    public static UserRoleModel ToModel(UserRoleEntity entity)
     {
         return new UserRoleModel
         {
