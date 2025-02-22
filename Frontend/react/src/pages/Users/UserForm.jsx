@@ -10,7 +10,7 @@ import {
   Divider,
   Autocomplete,
 } from '@mui/material';
-import { getUser, createUser, updateUser, getRoles } from '../../services/api';
+import { getUser, createUser, updateUser, getRoles, createUserRole, deleteUserRole } from '../../services/api';
 
 const UserForm = () => {
   const navigate = useNavigate();
@@ -23,6 +23,7 @@ const UserForm = () => {
     emailAddress: '',
     roles: []
   });
+  const [initialRoles, setInitialRoles] = useState([]);
 
   useEffect(() => {
     fetchRoles();
@@ -44,13 +45,15 @@ const UserForm = () => {
     try {
       const response = await getUser(id);
       const user = response.data;
+      const userRoles = user.roles || [];
       setFormData({
         id: user.id,
         firstName: user.firstName || '',
         lastName: user.lastName || '',
         emailAddress: user.emailAddress || '',
-        roles: user.roles || []
+        roles: userRoles
       });
+      setInitialRoles(userRoles);
     } catch (error) {
       console.error('Error fetching user:', error);
     }
@@ -59,16 +62,53 @@ const UserForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const submitData = {
-        ...formData,
-        roleIds: formData.roles.map(role => role.id)
+      const userData = {
+        id: formData.id,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        emailAddress: formData.emailAddress,
       };
-      
+
       if (id) {
-        await updateUser(submitData);
+        await updateUser(userData);
+        
+        // Handle role changes
+        const rolesToAdd = formData.roles.filter(
+          newRole => !initialRoles.some(oldRole => oldRole.id === newRole.id)
+        );
+        
+        const rolesToRemove = initialRoles.filter(
+          oldRole => !formData.roles.some(newRole => newRole.id === oldRole.id)
+        );
+
+        // Add new roles
+        for (const role of rolesToAdd) {
+          await createUserRole({
+            userId: parseInt(id),
+            roleId: role.id
+          });
+        }
+
+        // Remove old roles
+        for (const role of rolesToRemove) {
+          await deleteUserRole({
+            userId: parseInt(id),
+            roleId: role.id
+          });
+        }
       } else {
-        await createUser(submitData);
+        const response = await createUser(userData);
+        const newUserId = response.data.id;
+        
+        // Add roles for new user
+        for (const role of formData.roles) {
+          await createUserRole({
+            userId: newUserId,
+            roleId: role.id
+          });
+        }
       }
+      
       navigate('/users');
     } catch (error) {
       console.error('Error saving user:', error);

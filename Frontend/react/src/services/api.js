@@ -51,6 +51,11 @@ export const getRole = (id) => api.get(`/roles/id/${id}`);
 export const createRole = (data) => api.post('/roles', data);
 export const updateRole = (data) => api.put(`/roles`, data);
 
+// User roles
+export const getUserRole = (id) => api.get(`/user-roles/user-id/${id}`);
+export const createUserRole = (data) => api.post('/user-roles', data);
+export const deleteUserRole = (data) => api.delete(`/user-roles`, { data });
+
 // Service Units
 export const getServiceUnits = () => api.get('/service-units');
 export const getServiceUnit = (id) => api.get(`/service-units/id/${id}`);
