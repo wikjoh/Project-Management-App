@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { getCustomer, createCustomer, updateCustomer } from '../../services/api';
+import { getCustomer, createCustomer, updateCustomer, deleteCustomerPhoneNumber } from '../../services/api';
 
 const CustomerForm = () => {
   const navigate = useNavigate();
@@ -132,11 +132,28 @@ const CustomerForm = () => {
     }));
   };
 
-  const removePhoneNumber = (index) => {
-    setFormData(prevData => ({
-      ...prevData,
-      phoneNumbers: prevData.phoneNumbers.filter((_, i) => i !== index)
-    }));
+  const removePhoneNumber = async (index) => {
+    try {
+      const phoneToDelete = formData.phoneNumbers[index];
+      if (id && phoneToDelete.existingPhoneNumber) {
+        const deleteData = {
+          customerId: parseInt(formData.id),
+          phoneNumber: phoneToDelete.existingPhoneNumber,
+          isWorkNumber: phoneToDelete.isWorkNumber,
+          isCellNumber: phoneToDelete.isCellNumber,
+          isHomeNumber: phoneToDelete.isHomeNumber
+        };
+        await deleteCustomerPhoneNumber(deleteData);
+        await fetchCustomer();
+      } else {
+        setFormData(prevData => ({
+          ...prevData,
+          phoneNumbers: prevData.phoneNumbers.filter((_, i) => i !== index)
+        }));
+      }
+    } catch (error) {
+      console.error('Error deleting phone number:', error);
+    }
   };
 
   return (

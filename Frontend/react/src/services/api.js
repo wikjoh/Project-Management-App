@@ -21,9 +21,12 @@ export const createCustomer = (data) => api.post('/customers', data);
 export const updateCustomer = (data) => api.put(`/customers`, data);
 export const deleteCustomer = (data) => api.delete(`/customers`, data);
 
+// Customer phone numbers
+export const deleteCustomerPhoneNumber = (data) => api.delete(`/customer-phone-numbers`, { data });
+
 // Users
 export const getUsers = () => api.get('/users');
-export const getUser = (id) => api.get(`/users/${id}`);
+export const getUser = (id) => api.get(`/users/id/${id}`);
 export const createUser = (data) => api.post('/users', data);
 export const updateUser = (data) => api.put(`/users`, data);
 export const deleteUser = (data) => api.delete(`/users`, data);

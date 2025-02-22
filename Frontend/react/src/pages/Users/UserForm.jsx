@@ -20,9 +20,8 @@ const UserForm = () => {
     id: '',
     firstName: '',
     lastName: '',
-    email: '',
-    username: '',
-    roleId: '',
+    emailAddress: '',
+    roles: []
   });
 
   useEffect(() => {
@@ -47,11 +46,10 @@ const UserForm = () => {
       const user = response.data;
       setFormData({
         id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.emailAddress,
-        username: user.username,
-        roleId: user.roleId,
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        emailAddress: user.emailAddress || '',
+        roles: user.roles || []
       });
     } catch (error) {
       console.error('Error fetching user:', error);
@@ -61,10 +59,15 @@ const UserForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const submitData = {
+        ...formData,
+        roleIds: formData.roles.map(role => role.id)
+      };
+      
       if (id) {
-        await updateUser(formData);
+        await updateUser(submitData);
       } else {
-        await createUser(formData);
+        await createUser(submitData);
       }
       navigate('/users');
     } catch (error) {
@@ -112,22 +115,13 @@ const UserForm = () => {
                 Account Information
               </Typography>
             </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                label="Username"
-                value={formData.username}
-                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                required
-              />
-            </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 label="Email"
                 type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                value={formData.emailAddress}
+                onChange={(e) => setFormData({ ...formData, emailAddress: e.target.value })}
                 required
               />
             </Grid>
@@ -141,18 +135,20 @@ const UserForm = () => {
             </Grid>
             <Grid item xs={12}>
               <Autocomplete
+                multiple
                 fullWidth
                 options={roles}
-                getOptionLabel={(option) => option.name}
-                value={roles.find(role => role.id === formData.roleId) || null}
+                value={formData.roles}
+                getOptionLabel={(option) => option.role}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
                 onChange={(e, newValue) => setFormData({
                   ...formData,
-                  roleId: newValue?.id || ''
+                  roles: newValue
                 })}
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label="Role"
+                    label="Roles"
                     required
                   />
                 )}

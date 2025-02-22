@@ -12,18 +12,18 @@ import {
   TableRow,
   IconButton,
   Typography,
+  Chip,
+  Stack,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { getUsers, getRoles } from '../../services/api';
+import { getUsers } from '../../services/api';
 
 const Users = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
-  const [roles, setRoles] = useState([]);
 
   useEffect(() => {
     fetchUsers();
-    fetchRoles();
   }, []);
 
   const fetchUsers = async () => {
@@ -32,15 +32,6 @@ const Users = () => {
       setUsers(response.data);
     } catch (error) {
       console.error('Error fetching users:', error);
-    }
-  };
-
-  const fetchRoles = async () => {
-    try {
-      const response = await getRoles();
-      setRoles(response.data);
-    } catch (error) {
-      console.error('Error fetching roles:', error);
     }
   };
 
@@ -64,7 +55,7 @@ const Users = () => {
               <TableCell>Id</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Email</TableCell>
-              <TableCell>Role</TableCell>
+              <TableCell>Roles</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -75,7 +66,17 @@ const Users = () => {
                 <TableCell>{user.displayName}</TableCell>
                 <TableCell>{user.emailAddress}</TableCell>
                 <TableCell>
-                  {roles.find(role => role.id === user.roleId)?.name || 'Unknown'}
+                  <Stack direction="row" spacing={1}>
+                    {user.roles.map((role) => (
+                      <Chip 
+                        key={role.id}
+                        label={role.role}
+                        size="small"
+                        color="primary"
+                        variant="outlined"
+                      />
+                    ))}
+                  </Stack>
                 </TableCell>
                 <TableCell>
                   <IconButton 
