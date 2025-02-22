@@ -42,7 +42,8 @@ public static class ServiceFactory
             Name = entity.Name,
             Price = entity.Price,
             UnitId = entity.UnitId,
-            Unit = entity.Unit.Unit
+            Unit = entity.Unit.Unit,
+            Projects = entity.Projects?.Select(p => ProjectFactory.ToModel(p)).ToList() ?? []
         };
     }
 }

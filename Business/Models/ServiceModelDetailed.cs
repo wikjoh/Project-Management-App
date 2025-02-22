@@ -11,4 +11,6 @@ public class ServiceModelDetailed
     public int UnitId { get; set; }
 
     public string? Unit { get; init; } = null;
+
+    public List<ProjectModel> Projects { get; set; } = [];
 }
