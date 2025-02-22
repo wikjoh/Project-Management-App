@@ -16,7 +16,7 @@ export const deleteProject = (id) => api.delete(`/projects/id/${id}`);
 
 // Customers
 export const getCustomers = () => api.get('/customers/detailed');
-export const getCustomer = (id) => api.get(`/customers/${id}`);
+export const getCustomer = (id) => api.get(`/customers/detailed/id/${id}`);
 export const createCustomer = (data) => api.post('/customers', data);
 export const updateCustomer = (data) => api.put(`/customers`, data);
 export const deleteCustomer = (data) => api.delete(`/customers`, data);

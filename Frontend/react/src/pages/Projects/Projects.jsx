@@ -45,6 +45,11 @@ const Projects = () => {
     }
   };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    return dateString.split('T')[0];
+  };
+
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
@@ -83,8 +88,8 @@ const Projects = () => {
                 <TableCell>{project.customer.displayName}</TableCell>
                 <TableCell>{project.service.name}</TableCell>
                 <TableCell>{project.projectManager.displayName}</TableCell>
-                <TableCell>{project.startDate ? new Date(project.startDate).toLocaleDateString() : '-'}</TableCell>
-                <TableCell>{project.endDate ? new Date(project.endDate).toLocaleDateString() : '-'}</TableCell>
+                <TableCell>{formatDate(project.startDate)}</TableCell>
+                <TableCell>{formatDate(project.endDate)}</TableCell>
                 <TableCell>{project.customerName}</TableCell>
                 <TableCell>
                   <IconButton 

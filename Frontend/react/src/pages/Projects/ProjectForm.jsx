@@ -95,8 +95,8 @@ const ProjectForm = () => {
       setFormData({
         id: project.id,
         name: project.name,
-        startDate: project.startDate,
-        endDate: project.endDate,
+        startDate: project.startDate ? project.startDate.split('T')[0] : '',
+        endDate: project.endDate ? project.endDate.split('T')[0] : '',
         projectManagerId: project.projectManagerId,
         customerName: project.customerName,
         customerId: project.customerId,
@@ -173,9 +173,13 @@ const ProjectForm = () => {
                 fullWidth
                 label="Start Date"
                 type="date"
-                value={formData.startDate}
+                value={formData.startDate || ''}
                 onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                 InputLabelProps={{ shrink: true }}
+                inputProps={{ 
+                  min: '1900-01-01',
+                  max: '2100-12-31'
+                }}
               />
             </Grid>
             <Grid item xs={6}>
@@ -183,9 +187,13 @@ const ProjectForm = () => {
                 fullWidth
                 label="End Date"
                 type="date"
-                value={formData.endDate}
+                value={formData.endDate || ''}
                 onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
                 InputLabelProps={{ shrink: true }}
+                inputProps={{ 
+                  min: formData.startDate || '1900-01-01',
+                  max: '2100-12-31'
+                }}
               />
             </Grid>
 
@@ -250,6 +258,9 @@ const ProjectForm = () => {
                 type="number"
                 value={formData.serviceQuantity}
                 onChange={(e) => setFormData({ ...formData, serviceQuantity: e.target.value })}
+                InputLabelProps={{ 
+                  shrink: Boolean(formData.serviceQuantity)
+                }}
               />
             </Grid>
             <Grid item xs={3}>
@@ -259,6 +270,9 @@ const ProjectForm = () => {
                 type="number"
                 value={formData.totalPrice}
                 onChange={(e) => setFormData({ ...formData, totalPrice: e.target.value })}
+                InputLabelProps={{ 
+                  shrink: Boolean(formData.totalPrice)
+                }}
               />
             </Grid>
 

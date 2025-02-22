@@ -8,10 +8,7 @@ import {
   Typography,
   Grid,
   Divider,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
+  Autocomplete,
 } from '@mui/material';
 import { getUser, createUser, updateUser, getRoles } from '../../services/api';
 
@@ -143,20 +140,23 @@ const UserForm = () => {
               </Typography>
             </Grid>
             <Grid item xs={12}>
-              <FormControl fullWidth required>
-                <InputLabel>Role</InputLabel>
-                <Select
-                  value={formData.roleId}
-                  label="Role"
-                  onChange={(e) => setFormData({ ...formData, roleId: e.target.value })}
-                >
-                  {roles.map((role) => (
-                    <MenuItem key={role.id} value={role.id}>
-                      {role.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <Autocomplete
+                fullWidth
+                options={roles}
+                getOptionLabel={(option) => option.name}
+                value={roles.find(role => role.id === formData.roleId) || null}
+                onChange={(e, newValue) => setFormData({
+                  ...formData,
+                  roleId: newValue?.id || ''
+                })}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Role"
+                    required
+                  />
+                )}
+              />
             </Grid>
           </Grid>
 
