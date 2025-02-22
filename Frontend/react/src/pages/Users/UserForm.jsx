@@ -149,7 +149,6 @@ const UserForm = () => {
                   <TextField
                     {...params}
                     label="Roles"
-                    required
                   />
                 )}
               />
