@@ -18,7 +18,7 @@ public class UsersController(IUserService userService) : ControllerBase
         var result = await _userService.CreateUser(form);
 
         return result.Success
-            ? CreatedAtAction(nameof(Create), ((ServiceResult<UserModel>)result).Data)
+            ? CreatedAtAction(nameof(Create), ((ServiceResult<UserModelDetailed>)result).Data)
             : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
