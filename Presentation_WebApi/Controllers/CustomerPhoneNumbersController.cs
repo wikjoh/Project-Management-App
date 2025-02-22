@@ -13,7 +13,7 @@ public class CustomerPhoneNumbersController(ICustomerPhoneNumberService customer
 
     // Add phone number
     [HttpPost]
-    public async Task<IActionResult> Add(CustomerPhoneNumberForm form)
+    public async Task<IActionResult> Add(CustomerPhoneNumberRegistrationForm form)
     {
         var result = await _customerPhoneNumberService.AddPhoneNumberAsync(form);
         
@@ -35,7 +35,7 @@ public class CustomerPhoneNumbersController(ICustomerPhoneNumberService customer
 
     // Update phone number
     [HttpPut()]
-    public async Task<IActionResult> Update(CustomerPhoneNumberForm form)
+    public async Task<IActionResult> Update(CustomerPhoneNumberUpdateForm form)
     {
         var result = await _customerPhoneNumberService.UpdatePhoneNumberAsync(form);
 

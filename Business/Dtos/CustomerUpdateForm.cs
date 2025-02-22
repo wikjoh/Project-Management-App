@@ -19,4 +19,6 @@ public class CustomerUpdateForm
     [Required]
     [EmailAddress]
     public string EmailAddress { get; set; } = null!;
+
+    public List<CustomerPhoneNumberUpdateForm> PhoneNumbers { get; set; } = [];
 }

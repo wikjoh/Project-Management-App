@@ -6,13 +6,25 @@ namespace Business.Factories;
 
 public class CustomerPhoneNumberFactory
 {
-    public static CustomerPhoneNumberForm Create()
+    public static CustomerPhoneNumberRegistrationForm Create()
     {
-        return new CustomerPhoneNumberForm();
+        return new CustomerPhoneNumberRegistrationForm();
     }
 
 
-    public static CustomerPhoneNumberEntity ToEntity(CustomerPhoneNumberForm form)
+    public static CustomerPhoneNumberEntity ToEntity(CustomerPhoneNumberRegistrationForm form)
+    {
+        return new CustomerPhoneNumberEntity
+        {
+            CustomerId = form.CustomerId,
+            PhoneNumber = form.PhoneNumber,
+            IsWorkNumber = form.IsWorkNumber,
+            IsCellNumber = form.IsCellNumber,
+            IsHomeNumber = form.IsHomeNumber,
+        };
+    }
+
+    public static CustomerPhoneNumberEntity ToEntity(CustomerPhoneNumberUpdateForm form)
     {
         return new CustomerPhoneNumberEntity
         {

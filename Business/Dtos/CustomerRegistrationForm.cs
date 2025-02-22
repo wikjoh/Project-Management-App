@@ -18,5 +18,5 @@ public class CustomerRegistrationForm
     public string EmailAddress { get; set; } = null!;
 
 
-    public CustomerPhoneNumberForm PhoneNumberForm { get; set; } = null!;
+    public List<CustomerPhoneNumberRegistrationForm> PhoneNumbers { get; set; } = [];
 }

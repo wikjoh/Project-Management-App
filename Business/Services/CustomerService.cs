@@ -3,6 +3,7 @@ using Business.Factories;
 using Business.Interfaces;
 using Business.Models;
 using Business.Models.ServiceResult;
+using Data.Entities;
 using Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -35,9 +36,15 @@ public class CustomerService(ICustomerRepository customerRepository, ICustomerPh
             var customerResult = await _customerRepository.SaveAsync() > 0;
             if (!customerResult) throw new Exception("Failed to create customer entity.");
 
-            form.PhoneNumberForm.CustomerId = customerEntity.Id;
-            var phoneNumberResult = await _customerPhoneNumberService.AddPhoneNumberAsync(form.PhoneNumberForm);
-            if (!phoneNumberResult.Success) throw new Exception("Failed to create phone number entity.");
+            if (form.PhoneNumbers != null)
+            {
+                foreach (var phoneNumber in form.PhoneNumbers)
+                {
+                    phoneNumber.CustomerId = customerEntity.Id;
+                    var phoneNumberResult = await _customerPhoneNumberService.AddPhoneNumberAsync(phoneNumber);
+                    if (!phoneNumberResult.Success) throw new Exception("Failed to create phone number entity.");
+                }
+            }
 
             await _customerRepository.CommitTransactionAsync();
             var createdCustomerWithPhoneNumber = CustomerFactory.ToModelDetailed((await _customerRepository.GetOneAsync(x => x.Id == customerEntity.Id, q => q.Include(c => c.PhoneNumbers)))!);
@@ -123,26 +130,64 @@ public class CustomerService(ICustomerRepository customerRepository, ICustomerPh
         if (form == null)
             return ServiceResult.BadRequest("Form cannot be empty.");
 
-        var customer = await _customerRepository.GetOneAsync(x => x.Id == form.Id);
+        var customer = await _customerRepository.GetOneAsync(x => x.Id == form.Id, q => q.Include(c => c.PhoneNumbers));
 
         if (customer == null)
             return ServiceResult.NotFound($"Customer not found.");
 
-        customer.IsCompany = form.IsCompany;
-        customer.FirstName = form.FirstName;
-        customer.LastName = form.LastName;
-        customer.CompanyName = form.CompanyName;
-        customer.EmailAddress = form.EmailAddress;
+        await _customerRepository.BeginTransactionAsync();
 
-        _customerRepository.Update(customer);
-        var result = await _customerRepository.SaveAsync() > 0;
-        if (!result)
-            return ServiceResult.InternalServerError("Updating customer failed.");
+        try
+        {
+            customer.IsCompany = form.IsCompany;
+            customer.FirstName = form.FirstName;
+            customer.LastName = form.LastName;
+            customer.CompanyName = form.CompanyName;
+            customer.EmailAddress = form.EmailAddress;
 
-        customer = await _customerRepository.GetOneAsync(x => x.Id == form.Id);
-        return ServiceResult<CustomerModelDetailed?>.Ok(customer != null
-            ? CustomerFactory.ToModelDetailed(customer)
-            : null);
+            _customerRepository.Update(customer);
+            var result = await _customerRepository.SaveAsync() > 0;
+            if (!result)
+                return ServiceResult.InternalServerError("Updating customer failed.");
+
+            var cpnIterationCopy = customer.PhoneNumbers.ToList(); // prevent "Collection was modified" exception due to entity being modified during loop
+            if (form.PhoneNumbers != null)
+            {
+                foreach (var phoneNumber in form.PhoneNumbers)
+                {
+                    // If ExistingPN is null in form, add phone number
+                    if (phoneNumber.ExistingPhoneNumber == null && phoneNumber.PhoneNumber != null)
+                    {
+                        var addResult = await _customerPhoneNumberService.AddPhoneNumberAsync(new CustomerPhoneNumberRegistrationForm()
+                        {
+                            CustomerId = phoneNumber.CustomerId,
+                            PhoneNumber = phoneNumber.PhoneNumber,
+                            IsWorkNumber = phoneNumber.IsWorkNumber,
+                            IsHomeNumber = phoneNumber.IsHomeNumber,
+                            IsCellNumber = phoneNumber.IsCellNumber
+                        });
+                        if (!addResult.Success) throw new Exception($"Failed to add new number {phoneNumber} on customerId {phoneNumber.CustomerId}.");
+                    }
+                    // If ExistingPN is NOT null AND ExistingPN does NOT equal PN, update phone number
+                    else if (phoneNumber.ExistingPhoneNumber != null)
+                    {
+                        var updateResult = await _customerPhoneNumberService.UpdatePhoneNumberAsync(phoneNumber);
+                        if (!updateResult.Success) throw new Exception("Failed to update phone number entity.");
+                    }
+                }
+            }
+
+            await _customerRepository.CommitTransactionAsync();
+            var createdCustomerWithPhoneNumber = CustomerFactory.ToModelDetailed((await _customerRepository.GetOneAsync(x => x.Id == form.Id, q => q.Include(c => c.PhoneNumbers)))!);
+            return ServiceResult<CustomerModelDetailed>.Created(createdCustomerWithPhoneNumber);
+        }
+        catch (Exception ex)
+        {
+            string errorMessage = $"Failed updating customer. Rolling back. {ex.Message}";
+            Debug.WriteLine(errorMessage);
+            await _customerRepository.RollbackTransactionAsync();
+            return ServiceResult.InternalServerError(errorMessage);
+        }
     }
 
 

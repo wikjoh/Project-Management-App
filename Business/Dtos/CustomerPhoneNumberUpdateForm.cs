@@ -2,7 +2,7 @@
 
 namespace Business.Dtos;
 
-public class CustomerPhoneNumberForm
+public class CustomerPhoneNumberUpdateForm
 {
     [Required]
     public int CustomerId { get; set; }
@@ -10,6 +10,8 @@ public class CustomerPhoneNumberForm
     [Required]
     [RegularExpression(@"^\d{5,20}$", ErrorMessage = "Phone number must be at least 5 digits and at most 20 digits")]
     public string PhoneNumber { get; set; } = null!;
+
+    public string? ExistingPhoneNumber { get; set; } = null;
 
     [Required]
     public bool IsWorkNumber { get; set; }

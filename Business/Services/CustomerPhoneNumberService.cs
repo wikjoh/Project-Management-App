@@ -3,7 +3,10 @@ using Business.Factories;
 using Business.Interfaces;
 using Business.Models;
 using Business.Models.ServiceResult;
+using Data.Entities;
 using Data.Interfaces;
+using Data.Repositories;
+using System.Diagnostics;
 
 namespace Business.Services;
 
@@ -13,7 +16,7 @@ public class CustomerPhoneNumberService(ICustomerPhoneNumberRepository customerP
 
 
     // CREATE
-    public async Task<IServiceResult> AddPhoneNumberAsync(CustomerPhoneNumberForm form)
+    public async Task<IServiceResult> AddPhoneNumberAsync(CustomerPhoneNumberRegistrationForm form)
     {
         if (form == null)
             return ServiceResult.BadRequest("Form cannot be empty.");
@@ -47,27 +50,58 @@ public class CustomerPhoneNumberService(ICustomerPhoneNumberRepository customerP
 
 
     // UPDATE
-    public async Task<IServiceResult> UpdatePhoneNumberAsync(CustomerPhoneNumberForm form)
+    public async Task<IServiceResult> UpdatePhoneNumberAsync(CustomerPhoneNumberUpdateForm form)
     {
         if (form == null)
             return ServiceResult.BadRequest("Form cannot be empty.");
 
-        var existing = await _customerPhoneNumberRepository.GetOneAsync(x => x.PhoneNumber == form.PhoneNumber && x.CustomerId == form.CustomerId);
-        if (existing == null)
-            return ServiceResult.NotFound($"Phone number {form.PhoneNumber} not found on customerId {form.CustomerId}");
+        var existingNumber = await _customerPhoneNumberRepository.GetOneAsync(x => x.PhoneNumber == form.ExistingPhoneNumber && x.CustomerId == form.CustomerId);
+        if (existingNumber == null)
+            return ServiceResult.NotFound($"Phone number {form.ExistingPhoneNumber} not found on customerId {form.CustomerId}");
 
-        existing.IsWorkNumber = form.IsWorkNumber;
-        existing.IsCellNumber = form.IsCellNumber;
-        existing.IsHomeNumber = form.IsHomeNumber;
+        try
+        {
+            if (form.ExistingPhoneNumber == form.PhoneNumber)
+            {
+                existingNumber.IsHomeNumber = form.IsHomeNumber;
+                existingNumber.IsWorkNumber = form.IsWorkNumber;
+                existingNumber.IsCellNumber = form.IsCellNumber;
 
+                _customerPhoneNumberRepository.Update(existingNumber);
+                var updateResult = await _customerPhoneNumberRepository.SaveAsync() > 0;
+                if (!updateResult) throw new Exception($"Failed setting new phone number types on existing phone number {existingNumber.PhoneNumber} on customerId {existingNumber.CustomerId}");
+                
+                var updatedNumber = await _customerPhoneNumberRepository.GetOneAsync(x => x.PhoneNumber == form.PhoneNumber && x.CustomerId == form.CustomerId);
+                if (updatedNumber == null) throw new Exception($"Returned null entity after update.");
 
-        _customerPhoneNumberRepository.Update(existing);
-        var result = await _customerPhoneNumberRepository.SaveAsync() > 0;
-        if (!result)
-            return ServiceResult.InternalServerError("Failed updating phone number.");
+                return ServiceResult<CustomerPhoneNumberModel>.Ok(CustomerPhoneNumberFactory.ToModel(updatedNumber));
+            }
+            else
+            {
+                var newNumberEntity = CustomerPhoneNumberFactory.ToEntity(form);
 
-        var updated = await _customerPhoneNumberRepository.GetOneAsync(x => x.PhoneNumber == form.PhoneNumber && x.CustomerId == form.CustomerId);
-        return ServiceResult<CustomerPhoneNumberModel?>.Ok(CustomerPhoneNumberFactory.ToModel(updated!));
+                await _customerPhoneNumberRepository.CreateAsync(newNumberEntity);
+                var addResult = await _customerPhoneNumberRepository.SaveAsync() > 0;
+                if (!addResult) throw new Exception($"Failed to add number {form.PhoneNumber}.");
+
+                _customerPhoneNumberRepository.Delete(existingNumber);
+                var deleteResult = await _customerPhoneNumberRepository.SaveAsync() > 0;
+                if (!deleteResult) throw new Exception($"Failed to delete existing number {form.ExistingPhoneNumber}");
+
+                newNumberEntity = await _customerPhoneNumberRepository.GetOneAsync(x => x.PhoneNumber == form.PhoneNumber && x.CustomerId == form.CustomerId);
+                if (newNumberEntity == null) throw new Exception($"Retrieved null entity after update.");
+
+                var newNumber = CustomerPhoneNumberFactory.ToModel(newNumberEntity);
+                return ServiceResult<CustomerPhoneNumberModel>.Ok(newNumber);
+            }
+        }
+        catch (Exception ex)
+        {
+            string errorMessage = $"Failed updating phone number {form.ExistingPhoneNumber} on customerId {form.CustomerId}. {ex.Message}";
+            Debug.WriteLine(errorMessage);
+            // Throw exception to executing parent function which is running the transaction and will roll it back
+            throw new Exception(errorMessage);
+        }
     }
 
 
