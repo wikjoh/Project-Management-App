@@ -36,18 +36,18 @@ public class ServiceService(IServiceRepository serviceRepository) : IServiceServ
 
 
     // READ
-    public async Task<IServiceResult> GetAllServicesWithUnitAsync()
+    public async Task<IServiceResult> GetAllServicesDetailedAsync()
     {
-        var serviceEntities = await _serviceRepository.GetAllAsync(q => q.Include(s => s.Unit));
+        var serviceEntities = await _serviceRepository.GetAllAsync(q => q.Include(s => s.Unit).Include(s => s.Projects));
         var serviceList = serviceEntities != null ? serviceEntities.Select(x => ServiceFactory.ToModelDetailed(x)) : [];
 
         return ServiceResult<IEnumerable<ServiceModelDetailed>>.Ok(serviceList);
     }
 
 
-    public async Task<IServiceResult> GetServiceByIdWithUnitAsync(int id)
+    public async Task<IServiceResult> GetServiceByIdDetailedAsync(int id)
     {
-        var serviceEntity = await _serviceRepository.GetOneAsync(x => x.Id == id, q => q.Include(s => s.Unit));
+        var serviceEntity = await _serviceRepository.GetOneAsync(x => x.Id == id, q => q.Include(s => s.Unit).Include(s => s.Projects));
 
         if (serviceEntity == null)
             return ServiceResult.NotFound($"Service with id {id} does not exist.");

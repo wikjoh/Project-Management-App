@@ -27,7 +27,7 @@ public class ServicesController(IServiceService serviceService) : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllServices()
     {
-        var result = await _serviceService.GetAllServicesWithUnitAsync();
+        var result = await _serviceService.GetAllServicesDetailedAsync();
 
         return result.Success
             ? Ok(((ServiceResult<IEnumerable<ServiceModelDetailed>>)result).Data)
@@ -38,7 +38,7 @@ public class ServicesController(IServiceService serviceService) : ControllerBase
     [HttpGet("id/{id}")]
     public async Task<IActionResult> GetServiceById(int id)
     {
-        var result = await _serviceService.GetServiceByIdWithUnitAsync(id);
+        var result = await _serviceService.GetServiceByIdDetailedAsync(id);
 
         return result.Success
             ? Ok(((ServiceResult<ServiceModelDetailed>)result).Data)
