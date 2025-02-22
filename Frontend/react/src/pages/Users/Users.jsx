@@ -14,6 +14,7 @@ import {
   Typography,
   Chip,
   Stack,
+  Tooltip,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { getUsers } from '../../services/api';
@@ -56,6 +57,7 @@ const Users = () => {
               <TableCell>Name</TableCell>
               <TableCell>Email</TableCell>
               <TableCell>Roles</TableCell>
+              <TableCell>Projects</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -75,6 +77,22 @@ const Users = () => {
                         color="primary"
                         variant="outlined"
                       />
+                    ))}
+                  </Stack>
+                </TableCell>
+                <TableCell>
+                  <Stack direction="row" spacing={1}>
+                    {user.projects.map((project) => (
+                      <Tooltip key={project.id} title={`Status: ${project.status?.name || 'N/A'}`}>
+                        <Chip 
+                          label={project.name}
+                          size="small"
+                          color="secondary"
+                          variant="outlined"
+                          onClick={() => navigate(`/projects/${project.id}/edit`)}
+                          sx={{ cursor: 'pointer' }}
+                        />
+                      </Tooltip>
                     ))}
                   </Stack>
                 </TableCell>

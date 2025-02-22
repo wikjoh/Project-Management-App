@@ -12,6 +12,9 @@ import {
   TableRow,
   IconButton,
   Typography,
+  Chip,
+  Stack,
+  Tooltip,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { getCustomers } from '../../services/api';
@@ -53,6 +56,7 @@ const Customers = () => {
               <TableCell>Id</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Email</TableCell>
+              <TableCell>Projects</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -62,6 +66,22 @@ const Customers = () => {
                 <TableCell>{customer.id}</TableCell>
                 <TableCell>{customer.displayName}</TableCell>
                 <TableCell>{customer.emailAddress}</TableCell>
+                <TableCell>
+                  <Stack direction="row" spacing={1}>
+                    {customer.projects.map((project) => (
+                      <Tooltip key={project.id} title={`Status: ${project.status?.name || 'N/A'}`}>
+                        <Chip 
+                          label={project.name}
+                          size="small"
+                          color="secondary"
+                          variant="outlined"
+                          onClick={() => navigate(`/projects/${project.id}/edit`)}
+                          sx={{ cursor: 'pointer' }}
+                        />
+                      </Tooltip>
+                    ))}
+                  </Stack>
+                </TableCell>
                 <TableCell>
                   <IconButton 
                     onClick={() => navigate(`/customers/${customer.id}/edit`)} 
