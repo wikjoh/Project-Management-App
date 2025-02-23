@@ -7,7 +7,6 @@ import {
   TextField,
   Typography,
   Grid,
-  InputAdornment,
 } from '@mui/material';
 import { getServiceUnit, createServiceUnit, updateServiceUnit } from '../../services/api';
 
@@ -16,9 +15,7 @@ const ServiceUnitForm = () => {
   const { id } = useParams();
   const [formData, setFormData] = useState({
     id: '',
-    name: '',
-    description: '',
-    rate: '',
+    unit: ''
   });
 
   useEffect(() => {
@@ -33,9 +30,7 @@ const ServiceUnitForm = () => {
       const unit = response.data;
       setFormData({
         id: unit.id,
-        name: unit.name,
-        description: unit.description,
-        rate: unit.rate,
+        unit: unit.unit
       });
     } catch (error) {
       console.error('Error fetching service unit:', error);
@@ -68,32 +63,9 @@ const ServiceUnitForm = () => {
               <TextField
                 fullWidth
                 label="Unit Name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                value={formData.unit}
+                onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
                 required
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <TextField
-                fullWidth
-                label="Rate"
-                type="number"
-                value={formData.rate}
-                onChange={(e) => setFormData({ ...formData, rate: e.target.value })}
-                required
-                InputProps={{
-                  startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                }}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Description"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                multiline
-                rows={4}
               />
             </Grid>
           </Grid>
