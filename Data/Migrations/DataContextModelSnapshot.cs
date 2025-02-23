@@ -149,6 +149,9 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("ProjectStatuses");
                 });
 
@@ -166,6 +169,9 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Role")
+                        .IsUnique();
+
                     b.ToTable("Roles");
                 });
 
@@ -179,7 +185,7 @@ namespace Data.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
@@ -188,6 +194,9 @@ namespace Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.HasIndex("UnitId");
 
@@ -207,6 +216,9 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(10)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Unit")
+                        .IsUnique();
 
                     b.ToTable("ServiceUnits");
                 });

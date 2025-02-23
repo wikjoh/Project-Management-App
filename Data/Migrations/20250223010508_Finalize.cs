@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Updateentitynames : Migration
+    public partial class Finalize : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -111,7 +111,7 @@ namespace Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     UnitId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -223,9 +223,33 @@ namespace Data.Migrations
                 column: "StatusId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProjectStatuses_Name",
+                table: "ProjectStatuses",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Roles_Role",
+                table: "Roles",
+                column: "Role",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Services_Name",
+                table: "Services",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Services_UnitId",
                 table: "Services",
                 column: "UnitId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ServiceUnits_Unit",
+                table: "ServiceUnits",
+                column: "Unit",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserRoles_RoleId",
