@@ -11,6 +11,7 @@ const api = axios.create({
 export const getProjects = () => api.get('/projects');
 export const getProjectsDetailed = () => api.get('/projects/detailed');
 export const getProject = (id) => api.get(`/projects/id/${id}`);
+export const getProjectDetailed = (id) => api.get(`/projects/detailed/id/${id}`);
 export const createProject = (data) => api.post('/projects', data);
 export const updateProject = (data) => api.put(`/projects`, data);
 export const deleteProject = (id) => api.delete(`/projects/id/${id}`);

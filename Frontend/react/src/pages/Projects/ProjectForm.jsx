@@ -12,11 +12,11 @@ import {
   InputAdornment,
 } from '@mui/material';
 import { 
-  getProject, 
+  getProjectDetailed, 
   createProject, 
   updateProject, 
   getCustomers,
-  getServices,
+  getServicesDetailed,
   getUsers,
   getProjectStatuses,
 } from '../../services/api';
@@ -63,7 +63,7 @@ const ProjectForm = () => {
 
   const fetchServices = async () => {
     try {
-      const response = await getServices();
+      const response = await getServicesDetailed();
       setServices(response.data);
     } catch (error) {
       console.error('Error fetching services:', error);
@@ -90,24 +90,78 @@ const ProjectForm = () => {
 
   const fetchProject = async () => {
     try {
-      const response = await getProject(id);
+      const response = await getProjectDetailed(id);
       const project = response.data;
-      setFormData({
-        id: project.id,
-        name: project.name,
-        startDate: project.startDate ? project.startDate.split('T')[0] : '',
-        endDate: project.endDate ? project.endDate.split('T')[0] : '',
-        projectManagerId: project.projectManagerId,
-        customerName: project.customerName,
-        customerId: project.customerId,
-        serviceId: project.serviceId,
-        serviceQuantity: project.serviceQuantity,
-        statusId: project.statusId,
-        totalPrice: project.totalPrice,
+      
+      // First set all data except discount
+      setFormData(prevData => {
+        const updatedData = {
+          id: project.id,
+          name: project.name,
+          startDate: project.startDate ? project.startDate.split('T')[0] : '',
+          endDate: project.endDate ? project.endDate.split('T')[0] : '',
+          projectManagerId: project.projectManagerId,
+          customerName: project.customerName,
+          customerId: project.customerId,
+          serviceId: project.serviceId,
+          serviceQuantity: project.serviceQuantity || '',
+          statusId: project.statusId,
+          totalPrice: project.totalPrice || ''
+        };
+
+        // Calculate default total based on service and quantity
+        const selectedService = services.find(service => service.id === project.serviceId);
+        const defaultTotal = selectedService?.price && project.serviceQuantity 
+          ? selectedService.price * project.serviceQuantity 
+          : 0;
+
+        // Set total price to the project's total price, or default total for new projects
+        updatedData.totalPrice = project.totalPrice || defaultTotal;
+
+        return updatedData;
       });
     } catch (error) {
       console.error('Error fetching project:', error);
     }
+  };
+
+  // Calculate the base price based on service price and quantity
+  const calculateBasePrice = () => {
+    const selectedService = services.find(service => service.id === formData.serviceId);
+    if (selectedService?.price && formData.serviceQuantity) {
+      return selectedService.price * parseFloat(formData.serviceQuantity);
+    }
+    return 0;
+  };
+
+  // Update prices when service quantity changes
+  const handleServiceQuantityChange = (e) => {
+    const newQuantity = e.target.value;
+    const basePrice = services.find(service => service.id === formData.serviceId)?.price * parseFloat(newQuantity || 0);
+    
+    setFormData(prev => ({
+      ...prev,
+      serviceQuantity: newQuantity,
+      totalPrice: basePrice
+    }));
+  };
+
+  const handleServiceChange = (e, newValue) => {
+    setFormData(prev => {
+      const updatedData = {
+        ...prev,
+        serviceId: newValue?.id || ''
+      };
+
+      if (newValue?.price && prev.serviceQuantity) {
+        const basePrice = newValue.price * parseFloat(prev.serviceQuantity);
+        return {
+          ...updatedData,
+          totalPrice: basePrice
+        };
+      }
+      return updatedData;
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -233,57 +287,6 @@ const ProjectForm = () => {
               />
             </Grid>
 
-            {/* Service Information */}
-            <Grid item xs={12}>
-              <Divider sx={{ my: 2 }} />
-              <Typography variant="subtitle1" sx={{ mb: 2, mt: 2, color: 'text.secondary' }}>
-                Service Details
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Autocomplete
-                fullWidth
-                options={services}
-                getOptionLabel={(option) => option.name}
-                value={services.find(service => service.id === formData.serviceId) || null}
-                onChange={(e, newValue) => setFormData({
-                  ...formData,
-                  serviceId: newValue?.id || ''
-                })}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Service"
-                    required
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={3}>
-              <TextField
-                fullWidth
-                label="Service Quantity"
-                type="number"
-                value={formData.serviceQuantity}
-                onChange={(e) => setFormData({ ...formData, serviceQuantity: e.target.value })}
-                InputLabelProps={{ 
-                  shrink: Boolean(formData.serviceQuantity)
-                }}
-              />
-            </Grid>
-            <Grid item xs={3}>
-              <TextField
-                fullWidth
-                label="Total Price"
-                type="number"
-                value={formData.totalPrice}
-                onChange={(e) => setFormData({ ...formData, totalPrice: e.target.value })}
-                InputLabelProps={{ 
-                  shrink: Boolean(formData.totalPrice)
-                }}
-              />
-            </Grid>
-
             {/* Project Management */}
             <Grid item xs={12}>
               <Divider sx={{ my: 2 }} />
@@ -309,6 +312,120 @@ const ProjectForm = () => {
                   />
                 )}
               />
+            </Grid>
+
+            {/* Service Information */}
+            <Grid item xs={12}>
+              <Divider sx={{ my: 2 }} />
+              <Typography variant="subtitle1" sx={{ mb: 2, mt: 2, color: 'text.secondary' }}>
+                Service Details
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Autocomplete
+                fullWidth
+                options={services}
+                getOptionLabel={(option) => option ? `${option.name} (${option.price} ${option.unit})` : ''}
+                value={services.find(service => service.id === formData.serviceId) || null}
+                onChange={handleServiceChange}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Service"
+                    required
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Box sx={{ 
+                p: 2, 
+                bgcolor: 'grey.50', 
+                borderRadius: 1,
+                border: '1px solid',
+                borderColor: 'grey.200'
+              }}>
+                <Grid container spacing={3}>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      label="Service Quantity"
+                      type="number"
+                      value={formData.serviceQuantity}
+                      onChange={handleServiceQuantityChange}
+                      InputLabelProps={{ 
+                        shrink: formData.serviceQuantity !== null && formData.serviceQuantity !== ''
+                      }}
+                      sx={{ 
+                        backgroundColor: 'white',
+                        '& .MuiOutlinedInput-root': {
+                          backgroundColor: 'white'
+                        }
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      label="Price per Unit"
+                      type="number"
+                      value={services.find(service => service.id === formData.serviceId)?.price || ''}
+                      InputProps={{
+                        endAdornment: <InputAdornment position="end">{services.find(service => service.id === formData.serviceId)?.unit || ''}</InputAdornment>
+                      }}
+                      InputLabelProps={{ 
+                        shrink: true
+                      }}
+                      disabled
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Box sx={{ 
+                      display: 'flex', 
+                      alignItems: 'center',
+                      justifyContent: 'flex-end',
+                      gap: 2,
+                      mt: 1
+                    }}>
+                      <Typography>
+                        Default Total:
+                      </Typography>
+                      <Typography variant="h6">
+                        {calculateBasePrice()} kr
+                      </Typography>
+                    </Box>
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                      <TextField
+                        label="Final Price"
+                        type="number"
+                        value={formData.totalPrice}
+                        onChange={(e) => setFormData(prev => ({
+                          ...prev,
+                          totalPrice: e.target.value
+                        }))}
+                        InputProps={{
+                          endAdornment: <InputAdornment position="end">kr</InputAdornment>
+                        }}
+                        InputLabelProps={{ 
+                          shrink: formData.totalPrice !== null && formData.totalPrice !== ''
+                        }}
+                        sx={{ 
+                          width: '50%',
+                          backgroundColor: 'white',
+                          '& .MuiOutlinedInput-root': {
+                            backgroundColor: 'white',
+                            fontSize: '1.5rem',
+                            color: '#1976d2'
+                          }
+                        }}
+                      />
+                    </Box>
+                  </Grid>
+                </Grid>
+              </Box>
             </Grid>
           </Grid>
 

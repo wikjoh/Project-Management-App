@@ -9,6 +9,7 @@ import {
   Grid,
   Divider,
   Autocomplete,
+  InputAdornment,
 } from '@mui/material';
 import { getService, createService, updateService, getServiceUnits } from '../../services/api';
 
@@ -19,6 +20,7 @@ const ServiceForm = () => {
   const [formData, setFormData] = useState({
     id: '',
     name: '',
+    price: '',
     unit: null
   });
 
@@ -45,6 +47,7 @@ const ServiceForm = () => {
       setFormData({
         id: service.id,
         name: service.name || '',
+        price: service.price || '',
         unit: availableUnits.find(unit => unit.id === service.unitId) || null
       });
     } catch (error) {
@@ -57,6 +60,7 @@ const ServiceForm = () => {
     try {
       const submitData = {
         ...formData,
+        price: parseFloat(formData.price),
         unitId: formData.unit?.id
       };
 
@@ -82,7 +86,7 @@ const ServiceForm = () => {
             {/* Basic Service Information */}
             <Grid item xs={12}>
               <Typography variant="subtitle1" sx={{ mb: 2, color: 'text.secondary' }}>
-                Service Information
+                Basic Information
               </Typography>
             </Grid>
             <Grid item xs={12}>
@@ -95,14 +99,27 @@ const ServiceForm = () => {
               />
             </Grid>
 
-            {/* Unit Assignment */}
+            {/* Price and Unit Information */}
             <Grid item xs={12}>
               <Divider sx={{ my: 2 }} />
               <Typography variant="subtitle1" sx={{ mb: 2, mt: 2, color: 'text.secondary' }}>
-                Unit Assignment
+                Price and Unit Information
               </Typography>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                label="Price"
+                type="number"
+                value={formData.price}
+                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                InputLabelProps={{ 
+                  shrink: formData.price !== null && formData.price !== ''
+                }}
+                required
+              />
+            </Grid>
+            <Grid item xs={6}>
               <Autocomplete
                 fullWidth
                 options={serviceUnits}
