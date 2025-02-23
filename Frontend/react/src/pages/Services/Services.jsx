@@ -55,6 +55,7 @@ const Services = () => {
             <TableRow>
               <TableCell>Id</TableCell>
               <TableCell>Name</TableCell>
+              <TableCell>Price</TableCell>
               <TableCell>Unit</TableCell>
               <TableCell>Projects</TableCell>
               <TableCell>Actions</TableCell>
@@ -65,6 +66,7 @@ const Services = () => {
               <TableRow key={service.id}>
                 <TableCell>{service.id}</TableCell>
                 <TableCell>{service.name}</TableCell>
+                <TableCell>{service.price}</TableCell>
                 <TableCell>{service.unit || 'N/A'}</TableCell>
                 <TableCell>
                   <Stack direction="row" spacing={1}>

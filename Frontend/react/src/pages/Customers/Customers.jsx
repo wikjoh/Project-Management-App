@@ -69,16 +69,14 @@ const Customers = () => {
                 <TableCell>
                   <Stack direction="row" spacing={1}>
                     {customer.projects.map((project) => (
-                      <Tooltip key={project.id} title={`Status: ${project.status?.name || 'N/A'}`}>
-                        <Chip 
-                          label={project.name}
-                          size="small"
-                          color="secondary"
-                          variant="outlined"
-                          onClick={() => navigate(`/projects/${project.id}/edit`)}
-                          sx={{ cursor: 'pointer' }}
-                        />
-                      </Tooltip>
+                      <Chip 
+                        label={project.name}
+                        size="small"
+                        color="secondary"
+                        variant="outlined"
+                        onClick={() => navigate(`/projects/${project.id}/edit`)}
+                        sx={{ cursor: 'pointer' }}
+                      />
                     ))}
                   </Stack>
                 </TableCell>

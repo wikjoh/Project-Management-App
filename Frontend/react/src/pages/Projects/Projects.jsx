@@ -75,7 +75,6 @@ const Projects = () => {
               <TableCell>Manager</TableCell>
               <TableCell>Start Date</TableCell>
               <TableCell>End Date</TableCell>
-              <TableCell>Customer Note</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -90,7 +89,6 @@ const Projects = () => {
                 <TableCell>{project.projectManager.displayName}</TableCell>
                 <TableCell>{formatDate(project.startDate)}</TableCell>
                 <TableCell>{formatDate(project.endDate)}</TableCell>
-                <TableCell>{project.customerName}</TableCell>
                 <TableCell>
                   <IconButton 
                     onClick={() => navigate(`/projects/${project.id}/edit`)} 
