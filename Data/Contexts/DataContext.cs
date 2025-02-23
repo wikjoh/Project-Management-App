@@ -26,22 +26,26 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
         modelBuilder.Entity<ProjectEntity>()
             .HasOne(p => p.ProjectManager)
             .WithMany(pm => pm.Projects)
-            .HasForeignKey(p => p.ProjectManagerId);
+            .HasForeignKey(p => p.ProjectManagerId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<ProjectEntity>()
             .HasOne(p => p.Customer)
             .WithMany(c => c.Projects)
-            .HasForeignKey(p => p.CustomerId);
+            .HasForeignKey(p => p.CustomerId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<ProjectEntity>()
             .HasOne(p => p.Service)
             .WithMany(s => s.Projects)
-            .HasForeignKey(p => p.ServiceId);
+            .HasForeignKey(p => p.ServiceId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<ProjectEntity>()
             .HasOne(p => p.Status)
             .WithMany(ps => ps.Projects)
-            .HasForeignKey(p => p.StatusId);
+            .HasForeignKey(p => p.StatusId)
+            .OnDelete(DeleteBehavior.Restrict);
 
 
         // Customers
@@ -67,7 +71,8 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
         modelBuilder.Entity<ServiceEntity>()
             .HasOne(s => s.Unit)
             .WithMany(u => u.Services)
-            .HasForeignKey(s => s.UnitId);
+            .HasForeignKey(s => s.UnitId)
+            .OnDelete(DeleteBehavior.Restrict);
 
 
         // Users (project managers)
@@ -91,6 +96,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
         modelBuilder.Entity<UserRoleEntity>()
             .HasOne(ur => ur.Role)
             .WithMany(r => r.UserRoles)
-            .HasForeignKey(ur => ur.RoleId);
+            .HasForeignKey(ur => ur.RoleId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
