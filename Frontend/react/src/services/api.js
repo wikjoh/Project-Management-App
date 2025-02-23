@@ -33,14 +33,14 @@ export const deleteUser = (data) => api.delete(`/users`, data);
 
 // Services
 export const getServices = () => api.get('/services');
-export const getService = (id) => api.get(`/services/${id}`);
+export const getService = (id) => api.get(`/services/id/${id}`);
 export const createService = (data) => api.post('/services', data);
 export const updateService = (data) => api.put(`/services`, data);
 export const deleteService = (data) => api.delete(`/services`, data);
 
 // Project Statuses
 export const getProjectStatuses = () => api.get('/project-statuses');
-export const getProjectStatus = (id) => api.get(`/project-statuses/${id}`);
+export const getProjectStatus = (id) => api.get(`/project-statuses/id/${id}`);
 export const createProjectStatus = (data) => api.post('/project-statuses', data);
 export const updateProjectStatus = (data) => api.put(`/project-statuses`, data);
 export const deleteProjectStatus = (data) => api.delete(`/project-statuses`, data);

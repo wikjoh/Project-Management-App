@@ -20,6 +20,7 @@ import Roles from './pages/Misc/Roles'
 import RoleForm from './pages/Misc/RoleForm'
 import ServiceUnits from './pages/Misc/ServiceUnits'
 import ServiceUnitForm from './pages/Misc/ServiceUnitForm'
+import ServiceForm from './pages/Services/ServiceForm'
 
 const theme = createTheme({
   palette: {
@@ -59,6 +60,8 @@ function App() {
             
             {/* Services */}
             <Route path="/services" element={<Services />} />
+            <Route path="/services/new" element={<ServiceForm />} />
+            <Route path="/services/:id/edit" element={<ServiceForm />} />
             
             {/* Misc Routes */}
             <Route path="/misc/project-statuses" element={<ProjectStatuses />} />

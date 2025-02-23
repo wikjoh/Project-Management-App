@@ -16,7 +16,6 @@ const ProjectStatusForm = () => {
   const [formData, setFormData] = useState({
     id: '',
     name: '',
-    description: '',
   });
 
   useEffect(() => {
@@ -32,7 +31,6 @@ const ProjectStatusForm = () => {
       setFormData({
         id: status.id,
         name: status.name,
-        description: status.description,
       });
     } catch (error) {
       console.error('Error fetching project status:', error);
@@ -68,16 +66,6 @@ const ProjectStatusForm = () => {
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Description"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                multiline
-                rows={4}
               />
             </Grid>
           </Grid>

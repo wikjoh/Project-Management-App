@@ -65,7 +65,7 @@ const Services = () => {
               <TableRow key={service.id}>
                 <TableCell>{service.id}</TableCell>
                 <TableCell>{service.name}</TableCell>
-                <TableCell>{service.unit?.unit || 'N/A'}</TableCell>
+                <TableCell>{service.unit || 'N/A'}</TableCell>
                 <TableCell>
                   <Stack direction="row" spacing={1}>
                     {service.projects?.map((project) => (
@@ -75,7 +75,7 @@ const Services = () => {
                           size="small"
                           color="secondary"
                           variant="outlined"
-                          onClick={() => navigate(`/projects/${project.id}/edit`)}
+                          onClick={() => navigate(`/services/${project.id}/edit`)}
                           sx={{ cursor: 'pointer' }}
                         />
                       </Tooltip>

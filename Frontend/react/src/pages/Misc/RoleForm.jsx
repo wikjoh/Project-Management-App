@@ -15,8 +15,7 @@ const RoleForm = () => {
   const { id } = useParams();
   const [formData, setFormData] = useState({
     id: '',
-    name: '',
-    description: '',
+    role: '',
   });
 
   useEffect(() => {
@@ -31,8 +30,7 @@ const RoleForm = () => {
       const role = response.data;
       setFormData({
         id: role.id,
-        name: role.name,
-        description: role.description,
+        role: role.role,
       });
     } catch (error) {
       console.error('Error fetching role:', error);
@@ -65,19 +63,9 @@ const RoleForm = () => {
               <TextField
                 fullWidth
                 label="Role Name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                value={formData.role}
+                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                 required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Description"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                multiline
-                rows={4}
               />
             </Grid>
           </Grid>
