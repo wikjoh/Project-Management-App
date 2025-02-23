@@ -29,4 +29,15 @@ public static class ServiceUnitFactory
             Unit = entity.Unit,
         };
     }
+
+
+    public static ServiceUnitModelDetailed ToModelDetailed(ServiceUnitEntity entity)
+    {
+        return new ServiceUnitModelDetailed
+        {
+            Id = entity.Id,
+            Unit = entity.Unit,
+            Services = entity.Services?.Select(s => ServiceFactory.ToModel(s)).ToList() ?? []
+        };
+    }
 }

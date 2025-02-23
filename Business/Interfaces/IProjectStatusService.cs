@@ -6,7 +6,8 @@ public interface IProjectStatusService
 {
     Task<IServiceResult> CreateProjectStatusAsync(ProjectStatusRegistrationForm form);
     Task<IServiceResult> DeleteProjectStatusAsync(ProjectStatusModel model);
-    Task<IServiceResult> GetAllProjectStatuses();
+    Task<IServiceResult> GetAllProjectStatusesAsync();
+    Task<IServiceResult> GetAllProjectStatusesDetailedAsync();
     Task<IServiceResult> GetProjectStatusByIdAsync(int id);
     Task<IServiceResult> UpdateProjectStatusAsync(ProjectStatusUpdateForm form);
 }

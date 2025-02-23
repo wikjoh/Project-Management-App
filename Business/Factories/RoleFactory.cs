@@ -29,4 +29,15 @@ public static class RoleFactory
             Role = entity.Role,
         };
     }
+
+
+    public static RoleModelDetailed ToModelDetailed(RoleEntity entity)
+    {
+        return new RoleModelDetailed
+        {
+            Id = entity.Id,
+            Role = entity.Role,
+            Users = entity.UserRoles?.Select(ur => UserFactory.ToModel(ur.User)).ToList() ?? []
+        };
+    }
 }

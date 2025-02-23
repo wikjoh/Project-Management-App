@@ -27,6 +27,17 @@ public class ServicesController(IServiceService serviceService) : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllServices()
     {
+        var result = await _serviceService.GetAllServicesAsync();
+
+        return result.Success
+            ? Ok(((ServiceResult<IEnumerable<ServiceModel>>)result).Data)
+            : StatusCode(result.StatusCode, result.ErrorMessage);
+    }
+
+    // Get all services detailed
+    [HttpGet("detailed")]
+    public async Task<IActionResult> GetAllServicesDetailed()
+    {
         var result = await _serviceService.GetAllServicesDetailedAsync();
 
         return result.Success

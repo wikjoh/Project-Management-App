@@ -27,10 +27,21 @@ public class ProjectStatusesController(IProjectStatusService projectStatusServic
     [HttpGet]
     public async Task<IActionResult> GetAllProjectStatuses()
     {
-        var result = await _projectStatusService.GetAllProjectStatuses();
+        var result = await _projectStatusService.GetAllProjectStatusesAsync();
 
         return result.Success
             ? Ok(((ServiceResult<IEnumerable<ProjectStatusModel>>)result).Data)
+            : StatusCode(result.StatusCode, result.ErrorMessage);
+    }
+
+    // Get all project statuses detailed
+    [HttpGet("detailed")]
+    public async Task<IActionResult> GetAllProjectStatusesDetailed()
+    {
+        var result = await _projectStatusService.GetAllProjectStatusesDetailedAsync();
+
+        return result.Success
+            ? Ok(((ServiceResult<IEnumerable<ProjectStatusModelDetailed>>)result).Data)
             : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
@@ -63,7 +74,7 @@ public class ProjectStatusesController(IProjectStatusService projectStatusServic
         var result = await _projectStatusService.DeleteProjectStatusAsync(form);
 
         return result.Success
-            ? Ok("Service unit deleted successfully.")
+            ? Ok("Project status deleted successfully.")
             : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 }

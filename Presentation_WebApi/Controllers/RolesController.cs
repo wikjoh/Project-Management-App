@@ -38,9 +38,20 @@ public class RolesController(IRoleService roleService) : ControllerBase
             : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
+    // Get all roles detailed
+    [HttpGet("detailed")]
+    public async Task<IActionResult> GetAllRolesDetailed()
+    {
+        var result = await _roleService.GetAllRolesDetailedAsync();
+
+        return result.Success
+            ? Ok(((ServiceResult<IEnumerable<RoleModelDetailed>>)result).Data)
+            : StatusCode(result.StatusCode, result.ErrorMessage);
+    }
+
     // Get role by id
     [HttpGet("id/{id}")]
-    public async Task<IActionResult> GetRoleByIdAsync(int id)
+    public async Task<IActionResult> GetRoleById(int id)
     {
         var result = await _roleService.GetRoleByIdAsync(id);
 
@@ -51,7 +62,7 @@ public class RolesController(IRoleService roleService) : ControllerBase
 
     // Update role
     [HttpPut]
-    public async Task<IActionResult> UpdateRoleAsync(RoleUpdateForm form)
+    public async Task<IActionResult> UpdateRole(RoleUpdateForm form)
     {
         var result = await _roleService.UpdateRoleAsync(form);
 

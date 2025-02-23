@@ -34,6 +34,17 @@ public class ServiceUnitsController(IServiceUnitService serviceUnitService) : Co
             : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 
+    // Get all service units detailed
+    [HttpGet("detailed")]
+    public async Task<IActionResult> GetAllServiceUnitsDetailed()
+    {
+        var result = await _serviceUnitService.GetAllServiceUnitsDetailedAsync();
+
+        return result.Success
+            ? Ok(((ServiceResult<IEnumerable<ServiceUnitModelDetailed>>)result).Data)
+            : StatusCode(result.StatusCode, result.ErrorMessage);
+    }
+
     // Get service unit by id
     [HttpGet("id/{id}")]
     public async Task<IActionResult> GetServiceUnitById(int id)

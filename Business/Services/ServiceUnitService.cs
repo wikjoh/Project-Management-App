@@ -4,6 +4,7 @@ using Business.Interfaces;
 using Business.Models;
 using Business.Models.ServiceResult;
 using Data.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Business.Services;
 
@@ -41,6 +42,14 @@ public class ServiceUnitService(IServiceUnitRepository serviceUnitRepository) : 
         var serviceUnitList = serviceUnits != null ? serviceUnits.Select(x => ServiceUnitFactory.ToModel(x)) : [];
 
         return ServiceResult<IEnumerable<ServiceUnitModel>>.Ok(serviceUnitList);
+    }
+
+    public async Task<IServiceResult> GetAllServiceUnitsDetailedAsync()
+    {
+        var serviceUnits = await _serviceUnitRepository.GetAllAsync(q => q.Include(su => su.Services));
+        var serviceUnitList = serviceUnits != null ? serviceUnits.Select(x => ServiceUnitFactory.ToModelDetailed(x)) : [];
+
+        return ServiceResult<IEnumerable<ServiceUnitModelDetailed>>.Ok(serviceUnitList);
     }
 
     public async Task<IServiceResult> GetServiceUnitByIdAsync(int id)

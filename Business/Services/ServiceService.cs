@@ -36,6 +36,14 @@ public class ServiceService(IServiceRepository serviceRepository) : IServiceServ
 
 
     // READ
+    public async Task<IServiceResult> GetAllServicesAsync()
+    {
+        var serviceEntities = await _serviceRepository.GetAllAsync();
+        var serviceList = serviceEntities != null ? serviceEntities.Select(x => ServiceFactory.ToModel(x)) : [];
+
+        return ServiceResult<IEnumerable<ServiceModel>>.Ok(serviceList);
+    }
+
     public async Task<IServiceResult> GetAllServicesDetailedAsync()
     {
         var serviceEntities = await _serviceRepository.GetAllAsync(q => q.Include(s => s.Unit).Include(s => s.Projects));

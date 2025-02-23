@@ -29,4 +29,15 @@ public static class ProjectStatusFactory
             Name = entity.Name,
         };
     }
+
+
+    public static ProjectStatusModelDetailed ToModelDetailed(ProjectStatusEntity entity)
+    {
+        return new ProjectStatusModelDetailed
+        {
+            Id = entity.Id,
+            Name = entity.Name,
+            Projects = entity.Projects?.Select(p => ProjectFactory.ToModel(p)).ToList() ?? []
+        };
+    }
 }

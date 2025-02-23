@@ -5,6 +5,7 @@ using Business.Models.ServiceResult;
 using Business.Models;
 using Data.Interfaces;
 using Data.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Business.Services;
 
@@ -38,12 +39,20 @@ public class ProjectStatusService(IProjectStatusRepository projectStatusReposito
 
 
     // READ
-    public async Task<IServiceResult> GetAllProjectStatuses()
+    public async Task<IServiceResult> GetAllProjectStatusesAsync()
     {
         var projectStatusEntities = await _projectStatusRepository.GetAllAsync();
         var projectStatusList = projectStatusEntities != null ? projectStatusEntities.Select(x => ProjectStatusFactory.ToModel(x)) : [];
 
         return ServiceResult<IEnumerable<ProjectStatusModel>>.Ok(projectStatusList);
+    }
+
+    public async Task<IServiceResult> GetAllProjectStatusesDetailedAsync()
+    {
+        var projectStatusEntities = await _projectStatusRepository.GetAllAsync(q => q.Include(ps => ps.Projects));
+        var projectStatusList = projectStatusEntities != null ? projectStatusEntities.Select(x => ProjectStatusFactory.ToModelDetailed(x)) : [];
+
+        return ServiceResult<IEnumerable<ProjectStatusModelDetailed>>.Ok(projectStatusList);
     }
 
     public async Task<IServiceResult> GetProjectStatusByIdAsync(int id)

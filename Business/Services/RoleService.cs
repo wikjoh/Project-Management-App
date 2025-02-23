@@ -4,6 +4,7 @@ using Business.Interfaces;
 using Business.Models;
 using Business.Models.ServiceResult;
 using Data.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Business.Services;
 
@@ -43,6 +44,14 @@ public class RoleService(IRoleRepository roleRepository) : IRoleService
 
         var roleList = roles.Select(x => RoleFactory.ToModel(x));
         return ServiceResult<IEnumerable<RoleModel>>.Ok(roleList);
+    }
+
+    public async Task<IServiceResult> GetAllRolesDetailedAsync()
+    {
+        var roles = await _roleRepository.GetAllAsync(q => q.Include(r => r.UserRoles).ThenInclude(ur => ur.User));
+
+        var roleList = roles.Select(x => RoleFactory.ToModelDetailed(x));
+        return ServiceResult<IEnumerable<RoleModelDetailed>>.Ok(roleList);
     }
 
     public async Task<IServiceResult> GetRoleByIdAsync(int id)
