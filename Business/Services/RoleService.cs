@@ -56,6 +56,32 @@ public class RoleService(IRoleRepository roleRepository) : IRoleService
     }
 
 
+    // UPDATE
+    public async Task<IServiceResult> UpdateRoleAsync(RoleUpdateForm form)
+    {
+        if (form == null)
+            return ServiceResult.BadRequest("Form cannot be empty.");
+
+        var existingEntity = await _roleRepository.GetOneAsync(x => x.Id == form.Id);
+        if (existingEntity == null)
+            return ServiceResult.NotFound("Role not found.");
+
+        existingEntity.Role = form.Role;
+
+        _roleRepository.Update(existingEntity);
+        var result = await _roleRepository.SaveAsync() > 0;
+        if (!result)
+            return ServiceResult.InternalServerError("Failed to update role.");
+
+        var updatedEntity = await _roleRepository.GetOneAsync(x => x.Id == form.Id);
+        if (updatedEntity == null)
+            return ServiceResult.InternalServerError("Returned null entity after update.");
+
+        var updated = RoleFactory.ToModel(updatedEntity);
+        return ServiceResult<RoleModel>.Ok(updated);
+    }
+
+
     // DELETE
     public async Task<IServiceResult> DeleteRoleAsync(RoleModel model)
     {

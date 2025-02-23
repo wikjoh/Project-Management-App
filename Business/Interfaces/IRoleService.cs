@@ -8,4 +8,5 @@ public interface IRoleService
     Task<IServiceResult> DeleteRoleAsync(RoleModel model);
     Task<IServiceResult> GetAllRolesAsync();
     Task<IServiceResult> GetRoleByIdAsync(int id);
+    Task<IServiceResult> UpdateRoleAsync(RoleUpdateForm form);
 }

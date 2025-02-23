@@ -18,7 +18,7 @@ public class ServicesController(IServiceService serviceService) : ControllerBase
         var result = await _serviceService.CreateServiceAsync(form);
 
         return result.Success
-            ? CreatedAtAction(nameof(Add), ((ServiceResult<ServiceModel>)result).Data)
+            ? CreatedAtAction(nameof(Add), ((ServiceResult<ServiceModelDetailed>)result).Data)
             : StatusCode(result.StatusCode, result.ErrorMessage);
     }
 

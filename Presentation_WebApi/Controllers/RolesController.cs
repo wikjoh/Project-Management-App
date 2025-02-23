@@ -2,6 +2,7 @@
 using Business.Interfaces;
 using Business.Models;
 using Business.Models.ServiceResult;
+using Business.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation_WebApi.Controllers;
@@ -42,6 +43,17 @@ public class RolesController(IRoleService roleService) : ControllerBase
     public async Task<IActionResult> GetRoleByIdAsync(int id)
     {
         var result = await _roleService.GetRoleByIdAsync(id);
+
+        return result.Success
+            ? Ok(((ServiceResult<RoleModel>)result).Data)
+            : StatusCode(result.StatusCode, result.ErrorMessage);
+    }
+
+    // Update role
+    [HttpPut]
+    public async Task<IActionResult> UpdateRoleAsync(RoleUpdateForm form)
+    {
+        var result = await _roleService.UpdateRoleAsync(form);
 
         return result.Success
             ? Ok(((ServiceResult<RoleModel>)result).Data)
