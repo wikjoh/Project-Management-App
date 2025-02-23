@@ -113,10 +113,18 @@ const ProjectForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const submissionData = {
+        ...formData,
+        startDate: formData.startDate === '' ? null : formData.startDate,
+        endDate: formData.endDate === '' ? null : formData.endDate,
+        totalPrice: formData.totalPrice === '' ? null : formData.totalPrice,
+        serviceQuantity: formData.serviceQuantity === '' ? null : formData.serviceQuantity,
+      };
+
       if (id) {
-        await updateProject(formData);
+        await updateProject(submissionData);
       } else {
-        await createProject(formData);
+        await createProject(submissionData);
       }
       navigate('/projects');
     } catch (error) {

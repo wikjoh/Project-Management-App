@@ -17,7 +17,8 @@ import {
   Tooltip,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { getUsers } from '../../services/api';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { getUsers, deleteUser } from '../../services/api';
 
 const Users = () => {
   const navigate = useNavigate();
@@ -33,6 +34,23 @@ const Users = () => {
       setUsers(response.data);
     } catch (error) {
       console.error('Error fetching users:', error);
+    }
+  };
+
+  const handleDelete = async (user) => {
+    if (window.confirm('Are you sure you want to delete this user?')) {
+      try {
+        await deleteUser({
+          id: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          displayName: user.displayName,
+          emailAddress: user.emailAddress
+        });
+        fetchUsers();
+      } catch (error) {
+        console.error('Error deleting user:', error);
+      }
     }
   };
 
@@ -103,6 +121,17 @@ const Users = () => {
                   >
                     <EditIcon />
                   </IconButton>
+                  <Tooltip title={user.projects.length > 0 ? "Cannot delete user with associated projects" : ""}>
+                    <span>
+                      <IconButton 
+                        onClick={() => handleDelete(user)} 
+                        color="error"
+                        disabled={user.projects.length > 0}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </span>
+                  </Tooltip>
                 </TableCell>
               </TableRow>
             ))}

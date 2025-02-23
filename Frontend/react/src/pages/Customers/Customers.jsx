@@ -17,7 +17,8 @@ import {
   Tooltip,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { getCustomers } from '../../services/api';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { getCustomersDetailed, deleteCustomer } from '../../services/api';
 
 const Customers = () => {
   const navigate = useNavigate();
@@ -29,10 +30,21 @@ const Customers = () => {
 
   const fetchCustomers = async () => {
     try {
-      const response = await getCustomers();
+      const response = await getCustomersDetailed();
       setCustomers(response.data);
     } catch (error) {
       console.error('Error fetching customers:', error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this customer?')) {
+      try {
+        await deleteCustomer(id);
+        fetchCustomers();
+      } catch (error) {
+        console.error('Error deleting customer:', error);
+      }
     }
   };
 
@@ -70,6 +82,7 @@ const Customers = () => {
                   <Stack direction="row" spacing={1}>
                     {customer.projects.map((project) => (
                       <Chip 
+                        key={project.id}
                         label={project.name}
                         size="small"
                         color="secondary"
@@ -87,6 +100,17 @@ const Customers = () => {
                   >
                     <EditIcon />
                   </IconButton>
+                  <Tooltip title={customer.projects.length > 0 ? "Cannot delete customer with associated projects" : ""}>
+                    <span>
+                      <IconButton 
+                        onClick={() => handleDelete(customer.id)} 
+                        color="error"
+                        disabled={customer.projects.length > 0}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </span>
+                  </Tooltip>
                 </TableCell>
               </TableRow>
             ))}

@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { getProjects, deleteProject } from '../../services/api';
+import { getProjectsDetailed, deleteProject } from '../../services/api';
 
 const Projects = () => {
   const navigate = useNavigate();
@@ -27,7 +27,7 @@ const Projects = () => {
 
   const fetchProjects = async () => {
     try {
-      const response = await getProjects();
+      const response = await getProjectsDetailed();
       setProjects(response.data);
     } catch (error) {
       console.error('Error fetching projects:', error);

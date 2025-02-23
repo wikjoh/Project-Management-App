@@ -17,7 +17,8 @@ import {
   Tooltip,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { getServices } from '../../services/api';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { getServicesDetailed, deleteService } from '../../services/api';
 
 const Services = () => {
   const navigate = useNavigate();
@@ -29,10 +30,26 @@ const Services = () => {
 
   const fetchServices = async () => {
     try {
-      const response = await getServices();
+      const response = await getServicesDetailed();
       setServices(response.data);
     } catch (error) {
       console.error('Error fetching services:', error);
+    }
+  };
+
+  const handleDelete = async (service) => {
+    if (window.confirm('Are you sure you want to delete this service?')) {
+      try {
+        await deleteService({
+          id: service.id,
+          name: service.name,
+          price: service.price,
+          unitId: service.unitId
+        });
+        fetchServices();
+      } catch (error) {
+        console.error('Error deleting service:', error);
+      }
     }
   };
 
@@ -77,7 +94,7 @@ const Services = () => {
                           size="small"
                           color="secondary"
                           variant="outlined"
-                          onClick={() => navigate(`/services/${project.id}/edit`)}
+                          onClick={() => navigate(`/projects/${project.id}/edit`)}
                           sx={{ cursor: 'pointer' }}
                         />
                       </Tooltip>
@@ -91,6 +108,17 @@ const Services = () => {
                   >
                     <EditIcon />
                   </IconButton>
+                  <Tooltip title={service.projects?.length > 0 ? "Cannot delete service with associated projects" : ""}>
+                    <span>
+                      <IconButton 
+                        onClick={() => handleDelete(service)} 
+                        color="error"
+                        disabled={service.projects?.length > 0}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </span>
+                  </Tooltip>
                 </TableCell>
               </TableRow>
             ))}
