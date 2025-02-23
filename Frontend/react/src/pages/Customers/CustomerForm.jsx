@@ -24,7 +24,7 @@ const CustomerForm = () => {
   const { id } = useParams();
   const [formData, setFormData] = useState({
     id: '',
-    isCompany: false,
+    isCompany: true,
     firstName: '',
     lastName: '',
     companyName: '',
@@ -176,11 +176,11 @@ const CustomerForm = () => {
                 color="primary"
                 disabled={Boolean(id)}
               >
-                <ToggleButton value="private">
-                  Private Person
-                </ToggleButton>
                 <ToggleButton value="company">
                   Company
+                </ToggleButton>
+                <ToggleButton value="private">
+                  Person
                 </ToggleButton>
               </ToggleButtonGroup>
             </Grid>
